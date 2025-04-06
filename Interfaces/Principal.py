@@ -1,5 +1,5 @@
 from kivy.app import App
-from kivy.uix.BoxLayout import BoxLayout
+from kivy.uix.boxlayout import BoxLayout
 
 
 
