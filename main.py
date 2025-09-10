@@ -1,4 +1,4 @@
-from Interfaces.Principal import BuzzEvent
+from Interfaces.Master import BuzzEvent
 
 BuzzEvent().run()
 
