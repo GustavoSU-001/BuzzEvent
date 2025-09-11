@@ -7,7 +7,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import NoTransition
 
 from Interfaces.AA_Login import Layout_Login
-from Interfaces.AB_Recuperar_L import Layout_Recuperar_L
+from Interfaces.ABA_Recuperar_L import Layout_Recuperar_L
 
 
 class AA_Screen(Screen):
@@ -47,12 +47,12 @@ class BuzzEvent(App):
     
     def Cargar_Builder(self):
         Builder.load_file(r"Modelos_kivy/AA_Login.kv")
-        Builder.load_file(r"Modelos_kivy/AB_Recuperar_L.kv")
+        Builder.load_file(r"Modelos_kivy/ABA_Recuperar_L.kv")
     
     def Cargar_Screens(self):
         sm = ScreenManager()
         sm.add_widget(AA_Screen(name="AA_Login"))
-        sm.add_widget(AB_Screen(name="AB_Recuperar_L"))
+        sm.add_widget(AB_Screen(name="ABA_Recuperar_L"))
         
         
         

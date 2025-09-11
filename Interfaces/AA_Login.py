@@ -10,6 +10,6 @@ class Layout_Login(BoxLayout):
         self.abrir_otra_pantalla = abrir_otra_pantalla
         
     def Boton_recuperar_contrasena(self):
-        self.abrir_otra_pantalla("AB_Recuperar_L",transition= SlideTransition(direction="left"))
+        self.abrir_otra_pantalla("ABA_Recuperar_L",transition= SlideTransition(direction="left"))
 
 
