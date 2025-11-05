@@ -47,11 +47,13 @@
         write_tab: False
         password: root.password
 
-<Button_Login@BoxLayout>:
+<Button_Login@ButtonBehavior+BoxLayout>:
     text: 'Sin Texto'
     orientation: 'horizontal'
     size_hint_y: None
     height: dp(50)
+    color: 0,0,0,1
+    font_size: sp(22)
     canvas.before:
         Color:
             rgba: 0,0,0,1
@@ -65,11 +67,9 @@
             pos: self.pos[0] + dp(2), self.pos[1] + dp(2)
             size: self.size[0] - dp(4), self.size[1] - dp(4)
             radius: [20]
-    Button:
-        text: root.text
-        background_color: 0,0,0,0
-        color: 0,0,0,1
-        font_size: sp(22)
+    #Button:
+    #    text: root.text
+    #    on_release: root.on_release if root.on_release
 
 
 <Layout_Login>:
@@ -119,7 +119,7 @@
         t_text: 'Contraseña'
         password: True
     
-    BoxLayout:
+    BoxLayout: 
         orientation: 'vertical'
         #size_hint_y: None
         #height: dp(50)
@@ -153,5 +153,5 @@
 
     Button_Login:
         text: 'Iniciar Sesión'
-
+        on_release: root.Iniciar_Sesion(root.ids.input_usuario.ids.usuario.text)
 

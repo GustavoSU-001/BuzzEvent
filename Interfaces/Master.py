@@ -10,6 +10,10 @@ from Interfaces.AA_Login import Layout_Login
 from Interfaces.ABA_Recuperar_L import Layout_Recuperar_L
 from Interfaces.ACA_Registrar_L import Layout_Registrar_L
 
+from Interfaces.BA_Estandar import Layout_Estandar
+from Interfaces.BB_Organizador import Layout_Organizador
+from Interfaces.BC_Administrador import Layout_Administrador
+
 
 class AA_Screen(Screen):
     def __init__(self, **kwargs):
@@ -44,6 +48,39 @@ class AC_Screen(Screen):
         self.manager.current = nueva_pantalla
 
 
+class BA_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BA_Screen,self).__init__(**kwargs)
+        layout= Layout_Estandar(self.abrir_otra_pantalla)
+        self.add_widget(layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
+class BB_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BB_Screen,self).__init__(**kwargs)
+        layout= Layout_Organizador(self.abrir_otra_pantalla)
+        self.add_widget(layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
+class BC_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BC_Screen,self).__init__(**kwargs)
+        layout= Layout_Administrador(self.abrir_otra_pantalla)
+        self.add_widget(layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
 
 
 
@@ -57,15 +94,21 @@ class BuzzEvent(App):
         self.Cargar_Screens()
     
     def Cargar_Builder(self):
-        Builder.load_file(r"Modelos_kivy/AA_Login.kv")
-        Builder.load_file(r"Modelos_kivy/ABA_Recuperar_L.kv")
-        Builder.load_file(r"Modelos_kivy/ACA_Registrar_L.kv")
+        Builder.load_file(r"Modulos_kivy/AA_Login.kv")
+        Builder.load_file(r"Modulos_kivy/ABA_Recuperar_L.kv")
+        Builder.load_file(r"Modulos_kivy/ACA_Registrar_L.kv")
+        Builder.load_file(r"Modulos_kivy/BA_Estandar.kv")
+        Builder.load_file(r"Modulos_kivy/BB_Organizador.kv")
+        Builder.load_file(r"Modulos_kivy/BC_Administrador.kv")
     
     def Cargar_Screens(self):
         sm = ScreenManager()
         sm.add_widget(AA_Screen(name="AA_Login"))
         sm.add_widget(AB_Screen(name="ABA_Recuperar_L"))
         sm.add_widget(AC_Screen(name="ACA_Registrar_L"))
+        sm.add_widget(BA_Screen(name="BA_Estandar"))
+        sm.add_widget(BB_Screen(name="BB_Organizador"))
+        sm.add_widget(BC_Screen(name="BC_Administrador"))
         
         
         

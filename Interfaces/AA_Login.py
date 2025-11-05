@@ -11,7 +11,15 @@ class Layout_Login(BoxLayout):
         
     def Boton_recuperar_contrasena(self):
         self.abrir_otra_pantalla("ABA_Recuperar_L",transition= SlideTransition(direction="left"))
+        
     def Boton_registrar_cuenta(self):
         self.abrir_otra_pantalla("ACA_Registrar_L",transition= SlideTransition(direction="left"))
 
-
+    def Iniciar_Sesion(self, Rut, Contraseña=None):
+        if Rut == "Estandar":
+            self.abrir_otra_pantalla("BA_Estandar",transition= SlideTransition(direction="up"))
+        if Rut == "Organizador":
+            self.abrir_otra_pantalla("BB_Organizador",transition= SlideTransition(direction="up"))
+        if Rut == "Administrador":
+            self.abrir_otra_pantalla("BC_Administrador",transition= SlideTransition(direction="up"))
+        
