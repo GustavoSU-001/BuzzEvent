@@ -1,7 +1,206 @@
 
+<Input_Registrar_L@BoxLayout>:
+    bg_icon: 0.7,0.1,0.7,1
+    bg_text: 1,1,1,1
+    t_text: 'Sin Texto'
+    password: False
+    orientation: 'horizontal'
+    pos_hint: {'center_y': 0.5}
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [20]
+        Color:
+            rgba: root.bg_text
+        RoundedRectangle: #fondo blanco
+            pos: self.pos[0] + dp(2), self.pos[1] + dp(2)
+            size: self.size[0] - dp(4), self.size[1] - dp(4)
+            radius: [20]
+        
+    TextInput:
+        id: usuario
+        hint_text: root.t_text
+        multiline: False
+        font_size: root.size[1]*0.4
+        size_hint: 0.8,0.9
+        foreground_color: 0,0,0,1
+        background_color: 1,1,1,0
+        cursor_color: 0,0,0,1
+        pos_hint: {'center_y': 0.5}
+        padding: (dp(10),((self.height - self.font_size)/2)-dp(2),dp(15),((self.height - self.font_size)/2)-dp(2))
+        write_tab: False
+        password: root.password
+
+<Terminos_y_Condiciones@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint: 1, None
+    height: dp(30)
+    width: self.minimum_width
+    #pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: dp(5)
+        size_hint_x: None
+        CheckBox:
+            id: checkbox_Registrar_L
+            active: False
+            size_hint: None, None
+            size: dp(20), dp(20)
+            pos_hint: {'center_y': 0.5}
+            canvas: 
+                Color:
+                    rgba: (0, 0, 0, 1) if self.active else (0.7, 0.7, 0.7, 1)
+                Ellipse:
+                    pos: self.pos
+                    size: self.size
+        Label:
+            text: 'Acepto los '
+            color: 0,0,0,1
+            font_size: sp(14)
+            size_hint_y: None
+            size_hint_x: None
+            width: root.minimum_width
+            height: dp(20)
+            halign: 'right'
+            valign: 'middle'
+        Button:
+            text: 'Términos y Condiciones'
+            background_color: 0,0,0,0
+            color: 0,0,1,1
+            font_size: sp(14)
+            size_hint_y: None
+            size_hint_x: None
+            height: dp(20)
+            halign: 'left'
+            valign: 'middle'
+            #on_release: app.abrir_terminos_y_condiciones()
+
+<Button_registrar@BoxLayout>:
+    text: 'Sin Texto'
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(50)
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [20]
+        Color:
+            rgba: 0.8,0.8,0.8,1
+        RoundedRectangle:
+            pos: self.pos[0] + dp(2), self.pos[1] + dp(2)
+            size: self.size[0] - dp(4), self.size[1] - dp(4)
+            radius: [20]
+    Button:
+        text: root.text
+        background_color: 0,0,0,0
+        color: 0,0,0,1
+        font_size: sp(22)
 
 
-<Layout_Recuperar_L>:
+<Layout_Registrar_L>:
     orientation: 'vertical'
+    padding: dp(20)
+    spacing: dp(10)
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        size_hint_y: None
+        height: dp(50)
+        spacing: dp(10)
+        canvas.before:
+            Color:
+                rgba:0,0,0,1
+            Rectangle: 
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos[0]+dp(2), self.pos[1]+dp(2)
+                size: self.size[0]-dp(4), self.size[1]-dp(4)
+        Label:
+            text: 'Registro de Cuenta'
+            color: 0,0,0,1
+            font_size: dp(20)
+            bold: True
+            halign: 'center'
+            valign: 'middle'
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(10)
+
+        Input_Registrar_L:
+            t_text: 'Rut'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Nombres'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Apellidos'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Edad'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Numero de Teléfono'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Nombre de Usuario'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Correo Electrónico'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Input_Registrar_L:
+            t_text: 'Contraseña'
+            password: False
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Terminos_y_Condiciones:
+            id: terminos_y_condiciones
+            size_hint_y: None
+            height: dp(30)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: 0.2
+        Button_registrar:
+            text: 'Registrar Cuenta'
+            size_hint_y: None
+            height: dp(50)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}    
     
 

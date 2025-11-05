@@ -8,6 +8,7 @@ from kivy.uix.screenmanager import NoTransition
 
 from Interfaces.AA_Login import Layout_Login
 from Interfaces.ABA_Recuperar_L import Layout_Recuperar_L
+from Interfaces.ACA_Registrar_L import Layout_Registrar_L
 
 
 class AA_Screen(Screen):
@@ -19,6 +20,7 @@ class AA_Screen(Screen):
     def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
         self.manager.transition = transition  # Set the transition for the screen change
         self.manager.current = nueva_pantalla
+       
         
 class AB_Screen(Screen):
     def __init__(self, **kwargs):
@@ -31,6 +33,15 @@ class AB_Screen(Screen):
         self.manager.current = nueva_pantalla
         
 
+class AC_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(AC_Screen,self).__init__(**kwargs)
+        layout= Layout_Registrar_L(self.abrir_otra_pantalla)
+        self.add_widget(layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
 
 
 
@@ -48,11 +59,13 @@ class BuzzEvent(App):
     def Cargar_Builder(self):
         Builder.load_file(r"Modelos_kivy/AA_Login.kv")
         Builder.load_file(r"Modelos_kivy/ABA_Recuperar_L.kv")
+        Builder.load_file(r"Modelos_kivy/ACA_Registrar_L.kv")
     
     def Cargar_Screens(self):
         sm = ScreenManager()
         sm.add_widget(AA_Screen(name="AA_Login"))
         sm.add_widget(AB_Screen(name="ABA_Recuperar_L"))
+        sm.add_widget(AC_Screen(name="ACA_Registrar_L"))
         
         
         
