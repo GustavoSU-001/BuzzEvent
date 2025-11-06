@@ -40,12 +40,27 @@
         orientation: 'vertical'
         padding: 10
         spacing: 10
-        Button:
-            text: 'Cerrar sesion'
-            size_hint_y: None
-            height: 48
-            # Llama al método dismiss() de la instancia del ModalView
-            on_release: root.dismiss(); root.login() if root.login() else None
+        Label:
+            text: '¿Desea Cerrar la sesión?'
+            text_size: (None,None)
+            font_size: sp(25)
+        BoxLayout:
+            orientation: 'horizontal' 
+            size_hint: (0.8,None)
+            height: dp(45)
+            pos_hint: {'center_x':0.5}
+            Button:
+                text: 'Aceptar'
+                size_hint_y: None
+                height: 48
+                # Llama al método dismiss() de la instancia del ModalView
+                on_release: root.dismiss(); root.login() if root.login() else None
+            Button:
+                text: 'Denegar'
+                size_hint_y: None
+                height: 48
+                # Llama al método dismiss() de la instancia del ModalView
+                on_release: root.dismiss()
 
 
 <Boton_Cuenta@ButtonBehavior+BoxLayout>:
@@ -119,17 +134,17 @@
             size: self.size
             pos: self.pos
     Boton_Cuenta:
-        size_hint: (1,0.3)
+        size_hint: (1,0.2)
         perfil: "Usuario Estandar"
         nombre: "Nombrerito"
         apellido: "apellido"
-        on_release: Factory.Menu_Cuenta(login=root.Abrir_Login).open()
+        
         
             
     
     BoxLayout:
         orientation: 'vertical'
-        size_hint: (1,0.4)
+        size_hint: (1,0.6)
         canvas.before:
             Color:
                 rgba: 0,0,0,1
@@ -177,9 +192,9 @@
         size_hint: (1,None)
         height: dp(45)
         Button:
-            text: 'Cerrar sesión'
-            size_hint: 0.5,0.95
-            on_release: root.cerrar_sesion()
-
+            text: 'Cerrar Sesión'
+            pos_hint: {"center_x":0.5}
+            size: (0.4,1)
+            on_release: Factory.Menu_Cuenta(login=root.Abrir_Login).open()
 
 
