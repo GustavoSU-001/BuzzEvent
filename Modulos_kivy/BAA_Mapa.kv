@@ -1,6 +1,11 @@
 #:import MapView kivy_garden.mapview.MapView
 #:import MapSource kivy_garden.mapview.MapSource
 #:import MapMarker kivy_garden.mapview.MapMarker
+#:import MapMarkerPopup kivy_garden.mapview.MapMarkerPopup
+
+<Menu_Evento>:
+    
+
 
 <Layout_Mapa>:
     MapView:
@@ -20,6 +25,15 @@
             self.add_marker(self._marker), \
             setattr(root, 'marker', self._marker) \
             ]
-
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,0.1)
+        pos_hint: {"top":1}
+        Button:
+            text: 'Atras'
+            size_hint_x: 0.2
+            on_release: root.Regresar_Estandar()
+        TextInput:
+            size_hint_x: 0.8
 
 

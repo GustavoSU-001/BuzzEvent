@@ -68,9 +68,10 @@
             pos: self.pos[0] + dp(2), self.pos[1] + dp(2)
             size: self.size[0] - dp(4), self.size[1] - dp(4)
             radius: [20]
-    #Button:
-    #    text: root.text
-    #    on_release: root.on_release if root.on_release
+    Label:
+        text: root.text
+        color: root.color
+        font_size: root.height*0.4
 
 
 <Layout_Login>:
@@ -122,10 +123,10 @@
     
     BoxLayout: 
         orientation: 'vertical'
-        #size_hint_y: None
+        size_hint: 0.9,None
         #height: dp(50)
         spacing: dp(10)
-        pos_hint: {'center_x': 0.5, 'up': 1}
+        pos_hint: {"center_x":0.5}
         canvas.before:
             Color:
                 rgba: 0.2,0.6,1,1
@@ -135,20 +136,22 @@
                 radius: [20]
         Button:
             text: '¿Olvidaste tu contraseña?'
+            text_size: (self.width,None)
             color: 0,0,0.5,1
-            background_color: 1,1,1,0
+            background_color: 1,1,0,0.5
             font_size: sp(22)
-            size_hint_y: None
+            size_hint: 1,None
             height: dp(30)
             on_release: root.Boton_recuperar_contrasena()
             
         
         Button:
             text: '¿Desea Registrarse?'
+            text_size: (self.width,None)
             color: 0,0,0.5,1
-            background_color: 1,1,1,0
+            background_color: 1,1,0,0.5
             font_size: sp(22)
-            size_hint_y: None
+            size_hint: 1,None
             height: dp(35)
             on_release: root.Boton_registrar_cuenta()
 

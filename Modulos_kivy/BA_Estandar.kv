@@ -33,7 +33,8 @@
 
 <Menu_Cuenta@ModalView>:
     # Configuración de tu ModalView
-    size_hint: .5, .5
+    size_hint: 0.9, 0.5
+    
     auto_dismiss: True
     login:None
     BoxLayout:
@@ -42,8 +43,12 @@
         spacing: 10
         Label:
             text: '¿Desea Cerrar la sesión?'
-            text_size: (None,None)
+            halign: 'center'
+            valign: 'center'
+            size_hint: (1,1)
             font_size: sp(25)
+            text_size: (self.width,None)
+
         BoxLayout:
             orientation: 'horizontal' 
             size_hint: (0.8,None)

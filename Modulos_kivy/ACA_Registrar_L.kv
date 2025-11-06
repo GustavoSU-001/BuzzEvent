@@ -23,7 +23,7 @@
     TextInput:
         id: usuario
         hint_text: root.t_text
-        multiline: False
+        multiline: True
         font_size: root.size[1]*0.4
         size_hint: 0.8,0.9
         foreground_color: 0,0,0,1
@@ -78,7 +78,7 @@
             valign: 'middle'
             #on_release: app.abrir_terminos_y_condiciones()
 
-<Button_registrar@BoxLayout>:
+<Button_registrar@ButtonBehavior+BoxLayout>:
     text: 'Sin Texto'
     orientation: 'horizontal'
     size_hint_y: None
@@ -96,11 +96,10 @@
             pos: self.pos[0] + dp(2), self.pos[1] + dp(2)
             size: self.size[0] - dp(4), self.size[1] - dp(4)
             radius: [20]
-    Button:
+    Label:
         text: root.text
-        background_color: 0,0,0,0
         color: 0,0,0,1
-        font_size: sp(22)
+        font_size: root.height*0.4
 
 
 <Layout_Registrar_L>:
@@ -136,71 +135,96 @@
             bold: True
             halign: 'center'
             valign: 'middle'
-
     BoxLayout:
         orientation: 'vertical'
-        spacing: dp(10)
+        size_hint: (1,0.9)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size:self.size
+                pos: self.pos
+            Color:
+                rgba: 0.95, 0.9,0.9,1
+            Rectangle:
+                size:self.size[0]-dp(4),self.size[1]-dp(4)
+                pos:self.pos[0]+dp(2),self.pos[1]+dp(2)
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            size_hint: (1,1)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(5)
 
-        Input_Registrar_L:
-            t_text: 'Rut'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Nombres'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Apellidos'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Edad'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Numero de Teléfono'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Nombre de Usuario'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Correo Electrónico'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Input_Registrar_L:
-            t_text: 'Contraseña'
-            password: False
-            size_hint_y: None
-            height: dp(40)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        Terminos_y_Condiciones:
-            id: terminos_y_condiciones
-            size_hint_y: None
-            height: dp(30)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Rut'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Nombres'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Apellidos'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Edad'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Numero de Teléfono'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Nombre de Usuario'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Correo Electrónico'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                Input_Registrar_L:
+                    t_text: 'Contraseña'
+                    password: False
+                    size_hint_y: None
+                    height: dp(40)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    Terminos_y_Condiciones:
+        id: terminos_y_condiciones
+        size_hint_y: None
+        height: dp(30)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     BoxLayout:
-        orientation: 'vertical'
+        orientation: 'horizontal'
         size_hint_y: 0.2
         Button_registrar:
-            text: 'Registrar Cuenta'
-            size_hint_y: None
+            text: 'Regresar'
+            size_hint: 0.4,None
             height: dp(50)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}    
+            on_release: root.Regresar_Login()
+        
+        Button_registrar:
+            text: 'Registrar Cuenta'
+            size_hint: 1,None
+            height: dp(50)  
     
 

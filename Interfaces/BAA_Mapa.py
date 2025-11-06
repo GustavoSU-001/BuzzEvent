@@ -1,4 +1,5 @@
-from kivy.uix.actionbar import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.screenmanager import SlideTransition
 from kivy_garden.mapview import MapView, MapMarker
 from kivy.utils import platform
 #from plyer import gps
@@ -25,13 +26,17 @@ os.environ['KIVY_NO_CONSOLELOG'] = '1'  # Desactivar logging a consola
 from kivy.properties import NumericProperty, ObjectProperty, BooleanProperty, StringProperty
 from kivy.core.window import Window
 
-class Layout_Mapa(BoxLayout):
+class Layout_Mapa(FloatLayout):
     latitud = NumericProperty(-33.4569400)  # Santiago por defecto
     longitud = NumericProperty(-70.6482700)
     zoom = NumericProperty(12)
     marker = ObjectProperty(None)
     ubicacion_actualizada = BooleanProperty(False)  # Para controlar cuando actualizar el marcador
     def __init__(self, abrir_otra_pantalla, **kwargs):
+        super(Layout_Mapa,self).__init__(**kwargs)
+        self.abrir_otra_pantalla=abrir_otra_pantalla
+        
+    def Iniciar_Ventana(self):
         print("Iniciando Layout_Mapa...")
         
         # Asegurarse de que no haya caché al inicio
@@ -39,15 +44,39 @@ class Layout_Mapa(BoxLayout):
         
         # Configurar logging antes de inicializar
         self.configure_logging()
-        super(Layout_Mapa,self).__init__(**kwargs)
         
         # Obtener ubicación después de que el widget esté listo
-        Clock.schedule_once(self._initialize_location, 2)
+        self.reloj=Clock.schedule_once(self._initialize_location, 2)
         
         # Programar limpieza periódica del caché
-        Clock.schedule_interval(self.limpiar_cache, 5)  # Cada 5 segundos
+        self.relojito=Clock.schedule_interval(self.limpiar_cache, 5)  # Cada 5 segundos
         
         print("Layout_Mapa inicializado")
+        
+    def Cerrar_Ventana(self):
+        # Primero unschedule por función para eliminar todas las suscripciones a la función
+        Clock.unschedule(self._initialize_location)
+        Clock.unschedule(self.limpiar_cache)
+        # Luego cancelar la referencia concreta si existe
+        if self.reloj is not None:
+            try:
+                self.reloj.cancel()
+                print("Reloj cancelado correctamente")
+            except Exception as e:
+                print("No se pudo cancelar el reloj:", e)
+            finally:
+                self.reloj = None
+        if self.relojito is not None:
+            try:
+                self.relojito.cancel()
+                print("Reloj cancelado correctamente")
+            except Exception as e:
+                print("No se pudo cancelar el reloj:", e)
+            finally:
+                self.relojito = None
+    
+    def Regresar_Estandar(self):
+        self.abrir_otra_pantalla("BA_Estandar", transition= SlideTransition(direction="right"))
     
 
     def on_map_updated(self, *args):
@@ -102,7 +131,7 @@ class Layout_Mapa(BoxLayout):
                 
                 # Mantener solo los 4 archivos más recientes
                 for i, (mtime, file_path, file_name) in enumerate(cache_files):
-                    if i >= 6:  # Eliminar todos excepto los primeros 4
+                    if i >= 12:  # Eliminar todos excepto los primeros 4
                         try:
                             os.remove(file_path)
                         except Exception as e:pass
