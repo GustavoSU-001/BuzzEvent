@@ -1,4 +1,25 @@
+#:import MapView kivy_garden.mapview.MapView
+#:import MapSource kivy_garden.mapview.MapSource
+#:import MapMarker kivy_garden.mapview.MapMarker
 
+<Layout_Mapa>:
+    MapView:
+        id: map_view
+        lat: root.latitud
+        lon: root.longitud
+        zoom: root.zoom
+        zoom_min: 4
+        zoom_max: 18
+        map_source: MapSource(url="https://tile.openstreetmap.org/{z}/{x}/{y}.png",cache_key="custom_map",min_zoom=4,max_zoom=18,tile_size=256,image_ext="png")
+        on_parent:
+            self._marker = None
+        on_lat:
+            if root.ubicacion_actualizada and hasattr(self, '_marker'): [ \
+            self.remove_marker(self._marker) if self._marker else None, \
+            setattr(self, '_marker', MapMarker(lat=root.latitud, lon=root.longitud)), \
+            self.add_marker(self._marker), \
+            setattr(root, 'marker', self._marker) \
+            ]
 
 
 

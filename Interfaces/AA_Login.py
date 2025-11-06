@@ -16,8 +16,8 @@ class Layout_Login(BoxLayout):
         self.abrir_otra_pantalla("ACA_Registrar_L",transition= SlideTransition(direction="left"))
 
     def Iniciar_Sesion(self, Rut, Contraseña=None):
-        if  self.root.ids.username_input.text == "usuario" or self.root.ids.password_input.text == "123":
-            return  # Aquí podrías mostrar un mensaje de error al usuario
+        #if  self.root.ids.username_input.text == "usuario":
+        #    return  # Aquí podrías mostrar un mensaje de error al usuario
         if Rut == "Estandar":
             self.abrir_otra_pantalla("BA_Estandar",transition= SlideTransition(direction="up"))
         if Rut == "Organizador":

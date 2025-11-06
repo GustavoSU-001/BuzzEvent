@@ -11,8 +11,11 @@ from Interfaces.ABA_Recuperar_L import Layout_Recuperar_L
 from Interfaces.ACA_Registrar_L import Layout_Registrar_L
 
 from Interfaces.BA_Estandar import Layout_Estandar
+from Interfaces.BAA_Mapa import Layout_Mapa
+
 from Interfaces.BB_Organizador import Layout_Organizador
 from Interfaces.BC_Administrador import Layout_Administrador
+
 
 
 class AA_Screen(Screen):
@@ -59,6 +62,17 @@ class BA_Screen(Screen):
         self.manager.current = nueva_pantalla
 
 
+class BAA_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BAA_Screen,self).__init__(**kwargs)
+        layout= Layout_Mapa(self.abrir_otra_pantalla)
+        self.add_widget(layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
 class BB_Screen(Screen):
     def __init__(self, **kwargs):
         super(BB_Screen,self).__init__(**kwargs)
@@ -98,6 +112,7 @@ class BuzzEvent(App):
         Builder.load_file(r"Modulos_kivy/ABA_Recuperar_L.kv")
         Builder.load_file(r"Modulos_kivy/ACA_Registrar_L.kv")
         Builder.load_file(r"Modulos_kivy/BA_Estandar.kv")
+        Builder.load_file(r"Modulos_kivy/BAA_Mapa.kv")
         Builder.load_file(r"Modulos_kivy/BB_Organizador.kv")
         Builder.load_file(r"Modulos_kivy/BC_Administrador.kv")
     
@@ -107,6 +122,7 @@ class BuzzEvent(App):
         sm.add_widget(AB_Screen(name="ABA_Recuperar_L"))
         sm.add_widget(AC_Screen(name="ACA_Registrar_L"))
         sm.add_widget(BA_Screen(name="BA_Estandar"))
+        sm.add_widget(BAA_Screen(name="BAA_Mapa"))
         sm.add_widget(BB_Screen(name="BB_Organizador"))
         sm.add_widget(BC_Screen(name="BC_Administrador"))
         
