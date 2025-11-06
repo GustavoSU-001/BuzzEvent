@@ -1,5 +1,7 @@
+from kivy.uix.modalview import ModalView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import SlideTransition
+
 
 
 
@@ -10,3 +12,14 @@ class Layout_Estandar(BoxLayout):
         
     def Abrir_Mapa(self):
         self.abrir_otra_pantalla("BAA_Mapa", transition= SlideTransition(direction="left"))
+        
+    def Abrir_Login(self):
+        pass
+
+    def Abrir_menu_Cuenta(self):
+        mv=ModalView()
+        
+
+
+
+

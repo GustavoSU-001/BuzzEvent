@@ -31,6 +31,8 @@ class Layout_Mapa(BoxLayout):
     zoom = NumericProperty(12)
     marker = ObjectProperty(None)
     ubicacion_actualizada = BooleanProperty(False)  # Para controlar cuando actualizar el marcador
+    
+    
 
     def on_map_updated(self, *args):
         # Esta función se llama cuando el mapa se mueve o actualiza
@@ -87,11 +89,8 @@ class Layout_Mapa(BoxLayout):
                     if i >= 6:  # Eliminar todos excepto los primeros 4
                         try:
                             os.remove(file_path)
-                            print(f"Archivo eliminado (antiguo): {file_name}")
-                        except Exception as e:
-                            print(f"Error al eliminar {file_name}: {e}")
-                    else:
-                        print(f"Manteniendo archivo reciente: {file_name}")
+                        except Exception as e:pass
+                    else:pass
 
             return True
         except Exception as e:
@@ -100,14 +99,12 @@ class Layout_Mapa(BoxLayout):
 
     def limpiar_cache(self, *args):
         try:
-            print("\n--- Iniciando limpieza de caché ---")
             
             # Intentar limpiar el caché del sistema de archivos
             self.buscar_y_limpiar_cache()
             
             # Obtener referencia al MapView
             if not hasattr(self, 'ids') or 'map_view' not in self.ids:
-                print("Error: No se puede acceder al map_view")
                 return
             
             map_view = self.ids.map_view

@@ -1,4 +1,4 @@
-
+#: import Factory kivy.factory.Factory
 
 <FotoPerfil@BoxLayout>:
     size_hint: None, None
@@ -30,6 +30,88 @@
             keep_ratio: False
             #pos: self.parent.pos[0]+1,self.parent.pos[1]+1
 
+
+<Menu_Cuenta@ModalView>:
+    # Configuración de tu ModalView
+    size_hint: .5, .5
+    auto_dismiss: True
+    
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        Label:
+            text: '¡Este es mi Modal!'
+            size_hint_y: None
+            height: 48
+        Button:
+            text: 'Cerrar'
+            size_hint_y: None
+            height: 48
+            # Llama al método dismiss() de la instancia del ModalView
+            on_release: root.dismiss()
+
+
+<Boton_Cuenta@ButtonBehavior+BoxLayout>:
+    orientation: 'vertical'
+    perfil: "Sin Perfil"
+    imagen: None
+    nombre: "Sin Nombre"
+    apellido: "Sin Apellido"
+    canvas.before:
+        Color:
+            rgba: 0.9,0.9,0.9,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (None,1)
+        width: self.minimum_width
+        pos_hint: {'center_x':0.5}
+        
+        Label:
+            text: root.perfil
+            font_size: sp(20)
+            size_hint: (1,None)
+            height: self.font_size
+            canvas.before:
+                Color: 
+                    rgba:1,0.7,0.7,1
+                Rectangle: 
+                    size:self.size
+                    pos:self.pos
+
+        FotoPerfil:
+            size_hint: (None,1)
+            width: self.height
+            imagen:root.imagen
+        
+        Label:
+            text: root.nombre
+            font_size: sp(20)
+            size_hint: (1,None)
+            height: self.font_size
+            canvas.before:
+                Color: 
+                    rgba:1,0.7,0.7,1
+                Rectangle: 
+                    size:self.size
+                    pos:self.pos
+        Label:
+            text: root.apellido
+            font_size: sp(20)
+            size_hint: (1,None)
+            height: self.font_size
+            canvas.before:
+                Color: 
+                    rgba:1,0.7,0.7,1
+                Rectangle: 
+                    size:self.size
+                    pos:self.pos
+
+
+
 <Layout_Estandar>:
     orientation: 'vertical'
     size_hint: (1,1)
@@ -40,59 +122,13 @@
         Rectangle:
             size: self.size
             pos: self.pos
-    BoxLayout:
-        orientation: 'vertical'
+    Boton_Cuenta:
         size_hint: (1,0.3)
-        canvas.before:
-            Color:
-                rgba: 0.9,0.9,0.9,1
-            Rectangle:
-                size: self.size
-                pos: self.pos
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint: (None,1)
-            width: self.minimum_width
-            pos_hint: {'center_x':0.5}
-            
-            Label:
-                text: 'Usuario Estandar'
-                font_size: sp(20)
-                size_hint: (1,None)
-                height: self.font_size
-                canvas.before:
-                    Color: 
-                        rgba:1,0.7,0.7,1
-                    Rectangle: 
-                        size:self.size
-                        pos:self.pos
-
-            FotoPerfil:
-                size_hint: (None,1)
-                width: self.height
-            
-            Label:
-                text: 'Nombre'
-                font_size: sp(20)
-                size_hint: (1,None)
-                height: self.font_size
-                canvas.before:
-                    Color: 
-                        rgba:1,0.7,0.7,1
-                    Rectangle: 
-                        size:self.size
-                        pos:self.pos
-            Label:
-                text: 'Apellido'
-                font_size: sp(20)
-                size_hint: (1,None)
-                height: self.font_size
-                canvas.before:
-                    Color: 
-                        rgba:1,0.7,0.7,1
-                    Rectangle: 
-                        size:self.size
-                        pos:self.pos
+        perfil: "Usuario Estandar"
+        nombre: "Nombrerito"
+        apellido: "apellido"
+        on_release: Factory.Menu_Cuenta().open()
+        
             
     
     BoxLayout:
