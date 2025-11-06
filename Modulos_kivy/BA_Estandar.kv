@@ -35,21 +35,17 @@
     # Configuración de tu ModalView
     size_hint: .5, .5
     auto_dismiss: True
-    
+    login:None
     BoxLayout:
         orientation: 'vertical'
         padding: 10
         spacing: 10
-        Label:
-            text: '¡Este es mi Modal!'
-            size_hint_y: None
-            height: 48
         Button:
-            text: 'Cerrar'
+            text: 'Cerrar sesion'
             size_hint_y: None
             height: 48
             # Llama al método dismiss() de la instancia del ModalView
-            on_release: root.dismiss()
+            on_release: root.dismiss(); root.login() if root.login() else None
 
 
 <Boton_Cuenta@ButtonBehavior+BoxLayout>:
@@ -127,7 +123,7 @@
         perfil: "Usuario Estandar"
         nombre: "Nombrerito"
         apellido: "apellido"
-        on_release: Factory.Menu_Cuenta().open()
+        on_release: Factory.Menu_Cuenta(login=root.Abrir_Login).open()
         
             
     
@@ -181,8 +177,9 @@
         size_hint: (1,None)
         height: dp(45)
         Button:
-            text: 'Atras'
+            text: 'Cerrar sesión'
             size_hint: 0.5,0.95
+            on_release: root.cerrar_sesion()
 
 
 

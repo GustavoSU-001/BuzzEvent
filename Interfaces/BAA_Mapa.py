@@ -1,7 +1,7 @@
 from kivy.uix.actionbar import BoxLayout
 from kivy_garden.mapview import MapView, MapMarker
 from kivy.utils import platform
-from plyer import gps
+#from plyer import gps
 from kivy.clock import Clock
 import urllib.request
 import json
@@ -31,7 +31,23 @@ class Layout_Mapa(BoxLayout):
     zoom = NumericProperty(12)
     marker = ObjectProperty(None)
     ubicacion_actualizada = BooleanProperty(False)  # Para controlar cuando actualizar el marcador
-    
+    def __init__(self, abrir_otra_pantalla, **kwargs):
+        print("Iniciando Layout_Mapa...")
+        
+        # Asegurarse de que no haya caché al inicio
+        self.buscar_y_limpiar_cache()
+        
+        # Configurar logging antes de inicializar
+        self.configure_logging()
+        super(Layout_Mapa,self).__init__(**kwargs)
+        
+        # Obtener ubicación después de que el widget esté listo
+        Clock.schedule_once(self._initialize_location, 2)
+        
+        # Programar limpieza periódica del caché
+        Clock.schedule_interval(self.limpiar_cache, 5)  # Cada 5 segundos
+        
+        print("Layout_Mapa inicializado")
     
 
     def on_map_updated(self, *args):
@@ -134,23 +150,7 @@ class Layout_Mapa(BoxLayout):
         except Exception as e:
             print(f"Error durante la limpieza del caché: {e}")
 
-    def __init__(self, abrir_otra_pantalla, **kwargs):
-        print("Iniciando Layout_Mapa...")
-        
-        # Asegurarse de que no haya caché al inicio
-        self.buscar_y_limpiar_cache()
-        
-        # Configurar logging antes de inicializar
-        self.configure_logging()
-        super(Layout_Mapa,self).__init__(**kwargs)
-        
-        # Obtener ubicación después de que el widget esté listo
-        Clock.schedule_once(self._initialize_location, 2)
-        
-        # Programar limpieza periódica del caché
-        Clock.schedule_interval(self.limpiar_cache, 5)  # Cada 5 segundos
-        
-        print("Layout_Mapa inicializado")
+    
             
     def _initialize_location(self, dt):
         print("Iniciando búsqueda de ubicación...")
