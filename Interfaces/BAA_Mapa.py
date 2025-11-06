@@ -1,7 +1,7 @@
 from kivy.uix.actionbar import BoxLayout
 from kivy_garden.mapview import MapView, MapMarker
 from kivy.utils import platform
-from plyer import gps
+#from plyer import gps
 from kivy.clock import Clock
 import urllib.request
 import json
