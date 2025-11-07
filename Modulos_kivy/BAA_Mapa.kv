@@ -2,29 +2,247 @@
 #:import MapSource kivy_garden.mapview.MapSource
 #:import MapMarker kivy_garden.mapview.MapMarker
 #:import MapMarkerPopup kivy_garden.mapview.MapMarkerPopup
+#:import Factory kivy.factory.Factory
+#:import ButtonBehavior kivy.uix.behaviors.button
+#:import StringProperty kivy.properties.StringProperty
 
-<Menu_Evento>:
+<Miniatura_Evento>: 
+        # title, tiempo, action ahora son propiedades válidas de la clase Python.
+    title: 'Titulo de Evento'
+    tiempo: "15d"
+    action: None
     
+    # El popup se mostrará automáticamente al hacer clic en el marcador
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: None, None
+        size: dp(200), dp(80)
+        
+        # Usamos un Button en lugar de ButtonBehavior
+        Button:
+            size_hint: 1, 1
+            background_color: 0,0,0,0  # Transparente
+            on_release: 
+                menu = Factory.Menu_Evento()
+                menu.titulo = root.title
+                menu.open()
+            
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                
+                canvas.before:
+                    Color:
+                        rgba: 0.2,0.6,0.1,1
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                        
+                Label:
+                    text: root.title
+                    size_hint: 1, 0.5
+                    
+                Label:
+                    text: root.tiempo
+                    size_hint: 1, 0.5
+                    color: 0,0,0,1
+                    canvas.before:
+                        Color:
+                            rgba: 1,1,1,1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+            
+        
+<Menu_Evento>:
+    size_hint: 0.95, 0.9
+    padding: dp(30)
+    pos_hint: {'center_y':0.5}
+    background_color: (1,1,1,0)
+    auto_dismiss: True
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(50)
+            canvas.before:
+                Color:
+                    rgba:1,1,1,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            Label:
+                text: root.titulo
+                color: (0,0,0,1)
+                font_size: self.height * 0.4
+                valign: 'center'
+                halign: 'center'
+            Button:
+                text: 'X'
+                color: (0,0,0,1)
+                background_color: (0.9,0.2,0.2,1)
+                background_normal: ''
+                background_down: ''
+                size_hint_x: None
+                width: self.height
+                on_release: root.dismiss() if root.dismiss else None
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1,1)
+            canvas.before:
+                Color:
+                    rgba: 1,0.95,0.95,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+                scroll_y: 1
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: dp(2)
+                    Label:
+                        text: 'Hola'
+                        font_size: dp(30)
+                        size_hint_y: None
+                        height: self.font_size+dp(5)
+                        color: (0,0,0,1)
+                        canvas.before:
+                            Color: 
+                                rgba: 1,1,0,1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos 
+                    Label:
+                        text: 'Hola'
+                        font_size: dp(30)
+                        color: (0,0,0,1)
+                        size_hint_y: None
+                        height: self.font_size+dp(5)
+                        canvas.before:
+                            Color: 
+                                rgba: 1,1,0,1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos 
+                    Label:
+                        text: 'Hola'
+                        font_size: dp(30)
+                        color: (0,0,0,1)
+                        size_hint_y: None
+                        height: self.font_size+dp(5)
+                        canvas.before:
+                            Color: 
+                                rgba: 1,1,0,1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos 
+                    Label:
+                        text: 'Hola'
+                        font_size: dp(30)
+                        color: (0,0,0,1)
+                        size_hint_y: None
+                        height: self.font_size+dp(5)
+                        canvas.before:
+                            Color: 
+                                rgba: 1,1,0,1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos 
+                    Label:
+                        text: 'Hola'
+                        font_size: dp(30)
+                        color: (0,0,0,1)
+                        size_hint_y: None
+                        height: self.font_size+dp(5)
+                        canvas.before:
+                            Color: 
+                                rgba: 1,1,0,1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos 
+                    Label:
+                        text: 'Hola'
+                        font_size: dp(30)
+                        color: (0,0,0,1)
+                        size_hint_y: None
+                        height: self.font_size+dp(5)
+                        canvas.before:
+                            Color: 
+                                rgba: 1,1,0,1
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos 
+                        
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(60)
+            spacing: dp(3)
+            canvas.before:
+                Color: 
+                    rgba: 1,1,1,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            Button:
+                text: 'Info'
+                background_down: ''
+                #background_normal: ''
+                background_color: (0.1,0.4,1,1)
+                size_hint_x: 0.3
+            Button:
+                text: 'Shop'
+                background_down: ''
+                #background_normal: ''
+                background_color: (0,0,1,1)
+                size_hint_x: 0.3
+            Button:
+                text: 'Alert'
+                background_down: ''
+                #background_normal: ''
+                background_color: (0.1,0.1,0,1)
+                size_hint_x: 0.3
+
+
+<AgregarMapa@MapView>:
+    id: map_view
+    lat: -33.4569400  # Usar un valor fijo o la propiedad del Layout_Mapa
+    lon: -70.6482700
+    zoom: 12
+    zoom_min: 4
+    zoom_max: 18
+    map_source: MapSource(url="https://tile.openstreetmap.org/{z}/{x}/{y}.png",cache_key="custom_map",min_zoom=4,max_zoom=18,tile_size=256,image_ext="png")
+    on_parent:
+        self._marker = None
+    on_lat:
+        # CORRECCIÓN: Usar root.parent.parent para llegar al Layout_Mapa
+        if root.parent.parent.ubicacion_actualizada and hasattr(self, '_marker'): [ \
+        self.remove_marker(self._marker) if self._marker else None, \
+        
+        # 💥 CAMBIO CRÍTICO AQUÍ 💥
+        # Usar Miniatura_Evento en lugar de MapMarker para el marcador de la ubicación actual
+        setattr(self, '_marker', Factory.Miniatura_Evento(lat=root.parent.parent.latitud, lon=root.parent.parent.longitud, title="Ubicación Actual")), \
+        
+        self.add_marker(self._marker), \
+        
+        setattr(root.parent.parent, 'marker', self._marker) \
+        ]
+
 
 
 <Layout_Mapa>:
-    MapView:
-        id: map_view
-        lat: root.latitud
-        lon: root.longitud
-        zoom: root.zoom
-        zoom_min: 4
-        zoom_max: 18
-        map_source: MapSource(url="https://tile.openstreetmap.org/{z}/{x}/{y}.png",cache_key="custom_map",min_zoom=4,max_zoom=18,tile_size=256,image_ext="png")
-        on_parent:
-            self._marker = None
-        on_lat:
-            if root.ubicacion_actualizada and hasattr(self, '_marker'): [ \
-            self.remove_marker(self._marker) if self._marker else None, \
-            setattr(self, '_marker', MapMarker(lat=root.latitud, lon=root.longitud)), \
-            self.add_marker(self._marker), \
-            setattr(root, 'marker', self._marker) \
-            ]
+    BoxLayout:
+        id: mapa
+        size_hint: (1,1)
+            
+
     BoxLayout:
         orientation: 'horizontal'
         size_hint: (1,0.1)
@@ -35,5 +253,4 @@
             on_release: root.Regresar_Estandar()
         TextInput:
             size_hint_x: 0.8
-
 

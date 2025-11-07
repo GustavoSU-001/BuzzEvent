@@ -5,6 +5,7 @@
     bg_icon: 0.7,0.1,0.7,1
     bg_text: 1,1,1,1
     t_text: 'Sin Texto'
+    text: ""
     password: False
     orientation: 'horizontal'
     pos_hint: {'center_y': 0.5}
@@ -36,7 +37,7 @@
     TextInput:
         id: usuario
         hint_text: root.t_text
-        text: "Estandar"
+        text: root.text
         multiline: False
         font_size: root.size[1]*0.4
         size_hint: 0.8,0.9
@@ -104,6 +105,7 @@
     
     Input_Login:
         id: input_usuario
+        text: "Estandar"
         size_hint_y: None
         height: dp(50)
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}

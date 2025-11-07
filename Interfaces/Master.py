@@ -72,12 +72,13 @@ class BAA_Screen(Screen):
     def on_pre_enter(self, *args):
         if hasattr(self.layout, 'Iniciar_Ventana'):
             self.layout.Iniciar_Ventana()
-            
     
     #Cierra todas las funciones del mapa al salir en la ventana
     def on_pre_leave(self, *args):
         if hasattr(self.layout, 'Cerrar_Ventana'):
             self.layout.Cerrar_Ventana()
+        if hasattr(self.layout, 'reiniciar_mapa'):
+            self.layout.reiniciar_mapa()
 
     def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
         self.manager.transition = transition  # Set the transition for the screen change
