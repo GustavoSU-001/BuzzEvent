@@ -1,0 +1,149 @@
+#:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
+#:import Factory kivy.factory.Factory
+
+
+
+
+<Elemento_Evento@ButtonBehavior+BoxLayout>:
+    orientation: 'vertical'
+    titulo: "Sin Titulo"
+    fecha: "01-01-2025"
+    tiempo_restante: "15d"
+    size_hint: (1,None)
+    height: dp(60)
+    canvas.before:
+        Color:
+            rgba:0,0,0,1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(10)]
+        Color:
+            rgba:1,1,1,1
+        RoundedRectangle:
+            pos: self.pos[0]+1,self.pos[1]+1
+            size: self.size[0]-2,self.size[1]-2
+            radius: [dp(10)]
+    Label:
+        text: root.titulo
+        color: (0,0,0,1)
+        size_hint: 1,0.6
+        font_size: self.height*0.8
+        walk: True
+        shorten: True
+        canvas.before:
+            Color:
+                rgba:0,0,0,1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [dp(10)]
+            Color:
+                rgba:1,1,1,1
+            RoundedRectangle:
+                pos: self.pos[0]+1,self.pos[1]+1
+                size: self.size[0]-2,self.size[1]-2
+                radius: [dp(10)]
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,0.4)
+        padding: dp(3),dp(0),dp(3),dp(0)
+        Label:
+            text: root.fecha
+            color: (0,0,0,1)
+            size_hint: (0.8,1)
+            font_size: self.height*0.8
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(10)]
+                Color:
+                    rgba:1,1,1,1
+                RoundedRectangle:
+                    pos: self.pos[0]+1,self.pos[1]+1
+                    size: self.size[0]-2,self.size[1]-2
+                    radius: [dp(10)]
+        Label:
+            text: root.tiempo_restante
+            color: (0,0,0,1)
+            size_hint: (0.2,1)
+            font_size: self.height*0.8
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [dp(10)]
+                Color:
+                    rgba:1,1,1,1
+                RoundedRectangle:
+                    pos: self.pos[0]+1,self.pos[1]+1
+                    size: self.size[0]-2,self.size[1]-2
+                    radius: [dp(10)]
+    
+
+<Layout_EventosFavoritos>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+
+    canvas.before:
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(50)
+        Button:
+            text: 'Atras'
+            size_hint: (0.2,1)
+            on_release: root.Regresar_MenuPrincipal(Singleton_Perfil.get_instance().tipo_perfil)
+        Label:
+            text: 'Eventos Favoritos'
+            color:0,0,0,1
+            font_size: self.height*0.4
+            size_hint: (0.8,1)
+    BoxLayout:
+        size_hint: (1,None)
+        height: dp(50)
+        TextInput:
+            hint_text: "Buscar Evento"
+            size_hint: (1,1)
+
+    BoxLayout:
+        size_hint: (1,1)
+        padding: dp(3)
+        canvas.before:
+            Color:
+                rgba: 1,0.9,0.9,1
+            Rectangle:
+                size:self.size
+                pos:self.pos
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            size_hint: (1,1)
+            BoxLayout:
+                id: listado_eventos
+                orientation: 'vertical'
+                size_hint: (1,None)
+                height: self.minimum_height
+                spacing: dp(5)
+                Elemento_Evento:
+                    height: dp(65)
+                    on_release: Factory.Menu_Evento(titulo=self.titulo).open()
+                Elemento_Evento:
+                    height: dp(65)
+                    on_release: Factory.Menu_Evento(titulo=self.titulo).open()
+
+
+
+
+

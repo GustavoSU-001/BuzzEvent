@@ -5,6 +5,13 @@
 #:import Factory kivy.factory.Factory
 #:import ButtonBehavior kivy.uix.behaviors.button
 #:import StringProperty kivy.properties.StringProperty
+#:import StencilPush kivy.graphics.stencil_instructions.StencilPush
+#:import StencilPop kivy.graphics.stencil_instructions.StencilPop
+#:import StencilUse kivy.graphics.stencil_instructions.StencilUse
+#:import cos math.cos
+#:import sin math.sin
+#:import pi math.pi
+#:import ElementoEstrella Interfaces.BAA_Mapa.ElementoEstrella
 
 <Miniatura_Evento>: 
         # title, tiempo, action ahora son propiedades válidas de la clase Python.
@@ -53,14 +60,202 @@
                         Rectangle:
                             pos: self.pos
                             size: self.size
-            
+
+
+<Menu_Evento_Imagen@BoxLayout>:
+    imagen: None
+    canvas.before:
+        Color:
+            rgba:0,0,0,1
+        Rectangle: 
+            size:self.size
+            pos:self.pos
+    Image:
+        source: root.imagen
+        pos: root.pos[0]+1,root.pos[1]+1
+        size_hint: (None,None)
+        size: root.size[0]-2,root.size[1]-2
+
+<Elemento_Estrella@Widget>:
+    radio: 50.0 
+    porcentaje_visible:0
+    on_size: 
+        self.radio = min(self.width, self.height) * 0.45
+
+    canvas.before:
+        Color:
+            rgba: 1, 0.8, 0.1, root.porcentaje_visible 
+        Triangle:
+            points: [self.center_x, self.center_y, self.center_x, self.center_y + self.radio, self.center_x + self.radio, self.center_y]
+        Triangle:
+            points: [self.center_x, self.center_y, self.center_x + self.radio, self.center_y, self.center_x, self.center_y - self.radio]
+        Triangle:
+            points: [self.center_x, self.center_y, self.center_x, self.center_y - self.radio, self.center_x - self.radio, self.center_y]
+        Triangle:
+            points: [self.center_x, self.center_y, self.center_x - self.radio, self.center_y, self.center_x, self.center_y + self.radio]
+
+
+<Etiqueta_Evento@BoxLayout>:
+    texto: 'Sin Texto'
+    size_hint: (1,None)
+    
+    height: dp(25)
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        RoundedRectangle:
+            size: self.size
+            pos:self.pos
+            radius: [dp(5)]
+        Color:
+            rgba: 1,1,1,1
+        RoundedRectangle:
+            size: self.size[0]-2,self.size[1]-2
+            pos:self.pos[0]+1,self.pos[1]+1
+            radius: [dp(5)]
+    Label:
+        text: root.texto
+        font_size: self.height*0.8
+        size_hint: (1,1)
+        color: (0,0,0,1)
+
+
+
+<Menu_Evento_Informacion@BoxLayout>:
+    titulo: 'Sin Titulo'
+    texto: "Sin Texto"
+    calificacion: 0
+    size_hint_y: None
+    orientation: 'vertical'
+    height: self.minimum_height
+    padding: dp(5)
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: self.size[0]-2,self.size[1]-2
+            pos: self.pos[0]+1,self.pos[1]+1
+
         
+    Label:
+        size_hint: (1,None)
+        height: dp(40)
+        font_size: self.height*0.8
+        color: (0,0,0,1)
+        text: root.titulo
+    TextInput:
+        size_hint: (1,None)
+        height: dp(300)
+        hint_text: "Escribe una descripción"
+        multiline: True
+        text: root.texto
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(35)
+        Label:
+            text: 'Calificación'
+            font_size: self.height*0.8
+            color: (0,0,0,1)
+        Label:
+            text: f'{root.calificacion}/5'
+            font_size: self.height*0.8
+            size_hint: (None,1)
+            color: (0,0,0,1)
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (None,None)
+        width: self.minimum_width
+        height: dp(50)
+        pos_hint: {'center_x':0.5}
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 1 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 0 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 2 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 1 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 3 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 2 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 4 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 3 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 5 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 4 else 0)
+    
+    Label:
+        size_hint: (1,None)
+        height: dp(35)
+        text: 'Etiquetas'
+        font_size: self.height*0.8
+        color: 0,0,0,1
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            RoundedRectangle:
+                size: self.size
+                pos:self.pos
+                radius: [dp(5)]
+            Color:
+                rgba:1,1,1,1
+            RoundedRectangle:
+                size: self.size[0]-2,self.size[1]-2
+                pos: self.pos[0]+1,self.pos[1]+1
+    BoxLayout:
+        id: lista_etiquetas
+        orientation: 'vertical'
+        size_hint: (0.8,None)
+        pos_hint: {'center_x':0.5}
+        height: self.minimum_height
+
+
+                        
+<Menu_Evento_ListaCompra@BoxLayout>:
+    orientation: 'vertical'
+    pos_hint: {'center_x':0.5}
+    size_hint: (1,1)
+    Button:
+        text: 'Comprar Entradas'
+        size_hint: (0.95,None)
+        height: dp(35)
+        color: (0,0,0,1)
+    Button:
+        text: 'Comprar Pre-Inscripción'
+        size_hint: (0.95,None)
+        height: dp(35)
+        color: (0,0,0,1)
+    Button:
+        text: 'Compras con Cupones'
+        size_hint: (0.95,None)
+        height: dp(35)
+        color: (0,0,0,1)
+                    
+                
+
+
+         
+        
+
+
+
 <Menu_Evento>:
-    size_hint: 0.95, 0.9
-    padding: dp(30)
+    size_hint: 0.99, 0.9
+    padding: dp(5)
     pos_hint: {'center_y':0.5}
     background_color: (1,1,1,0)
     auto_dismiss: True
+    pestana:'imagen'
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
@@ -98,6 +293,8 @@
                     size: self.size
                     pos: self.pos
             ScrollView:
+                
+                id: listado_menu_evento
                 do_scroll_x: False
                 do_scroll_y: True
                 scroll_y: 1
@@ -197,12 +394,14 @@
                 #background_normal: ''
                 background_color: (0.1,0.4,1,1)
                 size_hint_x: 0.3
+                on_release: root.Cargar_Interfaz_Informacion() if root.pestana != 'info' else root.Cargar_Interfaz_Imagenes(); root.pestana="info" if root.pestana != 'info' else  'imagen'
             Button:
                 text: 'Shop'
                 background_down: ''
                 #background_normal: ''
                 background_color: (0,0,1,1)
                 size_hint_x: 0.3
+                on_release: root.Cargar_Interfaz_ListaCompras() if root.pestana != 'shop' else root.Cargar_Interfaz_Imagenes(); root.pestana="shop" if root.pestana != 'shop' else  'imagen'
             Button:
                 text: 'Alert'
                 background_down: ''
@@ -245,7 +444,8 @@
 
     BoxLayout:
         orientation: 'horizontal'
-        size_hint: (1,0.1)
+        size_hint: (1,None)
+        height: dp(50)
         pos_hint: {"top":1}
         Button:
             text: 'Atras'

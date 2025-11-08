@@ -7,16 +7,20 @@ from pathlib import Path
 # --- KIVY IMPORTS ---
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.modalview import ModalView
 from kivy.properties import (
     NumericProperty, ObjectProperty, BooleanProperty, StringProperty
 )
 from kivy.core.window import Window
+from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.network.urlrequest import UrlRequest
 from kivy.utils import platform
 from kivy.factory import Factory
+
+from Modulos.Singleton.Perfil import Singleton_Perfil
 
 # --- GARDEN / EXTERNAL IMPORTS ---
 from kivy_garden.mapview import MapView, MapMarkerPopup
@@ -40,13 +44,83 @@ os.environ['KIVY_NO_CONSOLELOG'] = '1'
 
 
 # --- CLASES DE WIDGETS ---
+class ElementoEstrella(Widget):
+    # 1. Propiedades con valor inicial numérico para evitar el NoneType
+    t = NumericProperty(50.0) 
+    r = NumericProperty(20.0) 
+    porcentaje_visible = NumericProperty(0.5)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # 2. Programamos el cálculo de tamaño para que ocurra después de que el widget se ha inicializado
+        # Esto es más seguro que solo usar on_size directamente.
+        self.bind(size=self._actualizar_radios) 
+        
+    def _actualizar_radios(self, instance, value):
+        # Aseguramos que el cálculo solo se haga si el tamaño es válido
+        if self.width > 0 and self.height > 0:
+            self.t = min(self.width, self.height) * 0.45
+            self.r = self.t * 0.4
+
+class Menu_Evento_Informacion(BoxLayout):
+    # Define las propiedades que estás pasando en el constructor:
+    descrip = StringProperty('')  # Para cadenas de texto
+    calificacion = NumericProperty(0)
+
 
 # La clase Menu_Evento DEBERÍA estar en un archivo KV o en un módulo separado
 class Menu_Evento(ModalView):
     """Popup modal para mostrar detalles de un evento."""
     titulo = StringProperty('')
-    # Nota: Si Miniatura_Evento y Menu_Evento se definen en KV, esta definición en Python 
-    # solo es necesaria si se usa Menu_Evento en Python antes de que el Builder lo cargue.
+    def Limpiar_contenido(self):
+        self.ids.listado_menu_evento.clear_widgets()
+        
+    def Cargar_Interfaz_Imagenes(self):
+        self.ids.listado_menu_evento.clear_widgets()
+        elementos=[]
+        for e in elementos:
+            imagen=Factory.Menu_Evento_Imagen(imagen=e['imagen'])
+            self.ids.listado_menu_evento.add_widgets(imagen)
+
+        
+    def Cargar_Interfaz_Informacion(self):
+        self.ids.listado_menu_evento.clear_widgets()
+        elementos={
+            'descripcion': 'Este es un ejemplo de descripción. Lorem ipsum dolor sit amet consectetur adipiscing elit justo, suscipit congue lectus pellentesque vulputate imperdiet feugiat, est ligula augue nibh litora egestas torquent. Lobortis tellus integer potenti ornare commodo duis platea accumsan sed proin, leo mauris iaculis et mollis metus consequat orci ullamcorper, sapien euismod venenatis eros dapibus arcu cubilia facilisi posuere. Metus mauris porttitor pharetra hendrerit dis interdum netus, sociis aliquam nulla leo tincidunt himenaeos semper, tellus suspendisse venenatis etiam integer proin.',
+            'calificacion': 3.3,
+            'etiquetas':["Etiqueta1","Etiqueta2","Etiqueta3","Etiqueta4"]
+        }
+        interfaz = Factory.Menu_Evento_Informacion()
+        interfaz.texto=elementos['descripcion']
+        interfaz.calificacion=elementos["calificacion"]
+        
+        for e in elementos["etiquetas"]:
+            etiqueta=Factory.Etiqueta_Evento()
+            etiqueta.texto=e
+            etiqueta.altura=50
+            interfaz.ids.lista_etiquetas.add_widget(etiqueta)
+        
+        rol=Singleton_Perfil.get_instance().tipo_perfil
+        if rol == "Organizador":
+            etiqueta=Factory.Etiqueta_Evento()
+            etiqueta.texto='+'
+            etiqueta.altura=50
+            interfaz.ids.lista_etiquetas.add_widget(etiqueta)
+        
+        self.ids.listado_menu_evento.add_widget(interfaz)
+        
+            
+        
+    def Cargar_Interfaz_ListaCompras(self):
+        self.ids.listado_menu_evento.clear_widgets()
+        Shop=Factory.Menu_Evento_ListaCompra()
+        self.ids.listado_menu_evento.add_widget(Shop)
+    
+    def Cargar_Interfaz_Comprando(self):
+        pass
+        
+    def Cargar_Interfaz_Reporte(self):
+        pass
 
 class Miniatura_Evento(MapMarkerPopup):
     """
