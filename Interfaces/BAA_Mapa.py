@@ -87,12 +87,14 @@ class Menu_Evento(ModalView):
         self.ids.listado_menu_evento.clear_widgets()
         elementos={
             'descripcion': 'Este es un ejemplo de descripción. Lorem ipsum dolor sit amet consectetur adipiscing elit justo, suscipit congue lectus pellentesque vulputate imperdiet feugiat, est ligula augue nibh litora egestas torquent. Lobortis tellus integer potenti ornare commodo duis platea accumsan sed proin, leo mauris iaculis et mollis metus consequat orci ullamcorper, sapien euismod venenatis eros dapibus arcu cubilia facilisi posuere. Metus mauris porttitor pharetra hendrerit dis interdum netus, sociis aliquam nulla leo tincidunt himenaeos semper, tellus suspendisse venenatis etiam integer proin.',
+            'ubicacion': 'Lomas Turbas #145, Los Angeles, Bio bio, Chile',
             'calificacion': 3.3,
             'etiquetas':["Etiqueta1","Etiqueta2","Etiqueta3","Etiqueta4"]
         }
         interfaz = Factory.Menu_Evento_Informacion()
         interfaz.texto=elementos['descripcion']
         interfaz.calificacion=elementos["calificacion"]
+        interfaz.ubicacion=elementos["ubicacion"]
         
         for e in elementos["etiquetas"]:
             etiqueta=Factory.Etiqueta_Evento()

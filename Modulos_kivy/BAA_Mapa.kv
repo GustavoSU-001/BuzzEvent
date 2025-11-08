@@ -125,6 +125,7 @@
     titulo: 'Sin Titulo'
     texto: "Sin Texto"
     calificacion: 0
+    ubicacion: ''
     size_hint_y: None
     orientation: 'vertical'
     height: self.minimum_height
@@ -154,6 +155,19 @@
         hint_text: "Escribe una descripción"
         multiline: True
         text: root.texto
+    Label:
+        text: root.ubicacion
+        size_hint: (1,None)
+        height: dp(35)
+        font_size: self.height*0.8
+        color: (0,0,0,1)
+        canvas.before:
+            Color:
+                rgba: (1,1,0.9,1)
+            Rectangle:
+                pos: self.pos
+                size:self.size
+
     BoxLayout:
         orientation: 'horizontal'
         size_hint: (1,None)
