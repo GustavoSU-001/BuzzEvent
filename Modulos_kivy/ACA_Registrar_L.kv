@@ -1,4 +1,5 @@
-
+#:kivy 2.1.0
+#:import dp kivy.metrics.dp
 <Input_Registrar_L@BoxLayout>:
     bg_icon: 0.7,0.1,0.7,1
     bg_text: 1,1,1,1
@@ -161,48 +162,56 @@
                 spacing: dp(5)
 
                 Input_Registrar_L:
+                    id: rut_input
                     t_text: 'Rut'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
+                    id: nombres_input
                     t_text: 'Nombres'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
+                    id: apellidos_input
                     t_text: 'Apellidos'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
+                    id: edad_input
                     t_text: 'Edad'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
+                    id: telefono_input
                     t_text: 'Numero de Teléfono'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
-                    t_text: 'Nombre de Usuario'
+                    id: alias_input
+                    t_text: 'Alias de Usuario'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
+                    id: correo_input
                     t_text: 'Correo Electrónico'
                     password: False
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                 Input_Registrar_L:
+                    id: contrasena_input
                     t_text: 'Contraseña'
                     password: False
                     size_hint_y: None
@@ -225,6 +234,15 @@
         Button_registrar:
             text: 'Registrar Cuenta'
             size_hint: 1,None
-            height: dp(50)  
-    
-
+            height: dp(50)
+            on_release:
+                root.registrar_usuario_firestore(
+                alias_input.ids.usuario.text,
+                apellidos_input.ids.usuario.text,
+                contrasena_input.ids.usuario.text,
+                correo_input.ids.usuario.text,
+                edad_input.ids.usuario.text,
+                nombres_input.ids.usuario.text,
+                rut_input.ids.usuario.text,
+                telefono_input.ids.usuario.text
+                )
