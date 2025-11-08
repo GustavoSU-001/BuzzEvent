@@ -12,4 +12,5 @@ class Singleton_Perfil:
             raise Exception("Esta clase es un Singleton. Usa get_instance() para obtener la instancia.")
         else:
             self.tipo_perfil = None
+            self.token = None
             Singleton_Perfil._instance = self
