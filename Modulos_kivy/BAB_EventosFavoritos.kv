@@ -103,7 +103,7 @@
         Button:
             text: 'Atras'
             size_hint: (0.2,1)
-            on_release: root.Regresar_MenuPrincipal(Singleton_Perfil.get_instance().tipo_perfil)
+            on_release: root.Regresar_MenuPrincipal(Singleton_Perfil.get_instance().tipo_perfil) if Singleton_Perfil.get_instance().tipo_perfil else Abrir_Login()
         Label:
             text: 'Eventos Favoritos'
             color:0,0,0,1

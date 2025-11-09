@@ -1,4 +1,3 @@
-
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import SlideTransition
 
@@ -6,11 +5,13 @@ from kivy.uix.screenmanager import SlideTransition
 
 
 
-class Layout_EventosFavoritos(BoxLayout):
-    def __init__(self, abrir_otra_pantalla, **kwargs):
-        super(Layout_EventosFavoritos,self).__init__(**kwargs)
+
+
+class Layout_Suscripciones(BoxLayout):
+    def __init__(self, abrir_otra_pantalla, **kwarg):
+        super(Layout_Suscripciones,self).__init__(**kwarg)
         self.abrir_otra_pantalla= abrir_otra_pantalla
-        
+    
     def Regresar_MenuPrincipal(self, rol):
         if rol == "Estandar":
             self.abrir_otra_pantalla("BA_Estandar",transition= SlideTransition(direction="right"))
@@ -23,9 +24,6 @@ class Layout_EventosFavoritos(BoxLayout):
             
     def Abrir_Login(self):
         self.abrir_otra_pantalla("AA_Login", transition= SlideTransition(direction="right"))
-            
-            
-
 
 
 

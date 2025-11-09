@@ -13,6 +13,8 @@ from Interfaces.ACA_Registrar_L import Layout_Registrar_L
 from Interfaces.BA_Estandar import Layout_Estandar
 from Interfaces.BAA_Mapa import Layout_Mapa
 from Interfaces.BAB_EventosFavoritos import Layout_EventosFavoritos 
+from Interfaces.BAC_Cupones import Layout_Cupones
+from Interfaces.BAD_Suscripciones import Layout_Suscripciones
 
 from Interfaces.BB_Organizador import Layout_Organizador
 from Interfaces.BC_Administrador import Layout_Administrador
@@ -105,6 +107,28 @@ class BAB_Screen(Screen):
         self.manager.current = nueva_pantalla
 
 
+class BAC_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BAC_Screen,self).__init__(**kwargs)
+        self.layout= Layout_Cupones(self.abrir_otra_pantalla)
+        self.add_widget(self.layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
+class BAD_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BAD_Screen,self).__init__(**kwargs)
+        self.layout= Layout_Suscripciones(self.abrir_otra_pantalla)
+        self.add_widget(self.layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
 class BB_Screen(Screen):
     def __init__(self, **kwargs):
         super(BB_Screen,self).__init__(**kwargs)
@@ -146,6 +170,8 @@ class BuzzEvent(App):
         Builder.load_file(r"Modulos_kivy/BA_Estandar.kv")
         Builder.load_file(r"Modulos_kivy/BAA_Mapa.kv")
         Builder.load_file(r"Modulos_kivy/BAB_EventosFavoritos.kv")
+        Builder.load_file(r"Modulos_kivy/BAC_Cupones.kv")
+        Builder.load_file(r"Modulos_kivy\BAD_Suscripciones.kv")
         Builder.load_file(r"Modulos_kivy/BB_Organizador.kv")
         Builder.load_file(r"Modulos_kivy/BC_Administrador.kv")
     
@@ -157,6 +183,8 @@ class BuzzEvent(App):
         sm.add_widget(BA_Screen(name="BA_Estandar"))
         sm.add_widget(BAA_Screen(name="BAA_Mapa"))
         sm.add_widget(BAB_Screen(name="BAB_EventosFavoritos"))
+        sm.add_widget(BAC_Screen(name="BAC_Cupones"))
+        sm.add_widget(BAD_Screen(name="BAD_Suscripciones"))
         sm.add_widget(BB_Screen(name="BB_Organizador"))
         sm.add_widget(BC_Screen(name="BC_Administrador"))
         

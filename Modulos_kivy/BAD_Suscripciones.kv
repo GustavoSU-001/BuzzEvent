@@ -1,0 +1,80 @@
+#:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
+
+<Elemento_Suscripcion@BoxLayout>:
+    orientation: 'vertical'
+    size_hint: (1,None)
+    Label:
+        text: 'Suscripcion Anual'
+        size_hint: (1,None)
+        height: dp(35)
+        canvas.before:
+            Color:
+                rgba: 1,0.8,1,1
+            Rectangle: 
+                size:self.size 
+                pos: self.pos
+    TextInput:
+        text: 'Este es un ejemplo de descripción. Lorem ipsum dolor sit amet consectetur adipiscing elit justo, suscipit congue lectus pellentesque vulputate imperdiet feugiat, est ligula augue nibh litora egestas torquent. Lobortis tellus integer potenti ornare commodo duis platea accumsan sed proin, leo mauris iaculis et mollis metus consequat orci ullamcorper, sapien euismod venenatis eros dapibus arcu cubilia facilisi posuere. Metus mauris porttitor pharetra hendrerit dis interdum netus, sociis aliquam nulla leo tincidunt himenaeos semper, tellus suspendisse venenatis etiam integer proin.'
+        size_hint: (0.8,None)
+        height: self.minimum_height
+        hint_text: "Escribe una descripción"
+        multiline: True
+        pos_hint: {'center_x':0.5}
+        background_disabled_normal: ''
+        disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    
+
+        
+
+
+
+
+
+
+<Layout_Suscripciones>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+    canvas.before:
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(50)
+        Button:
+            text: 'Atras'
+            size_hint: (0.2,1)
+            on_release: root.Regresar_MenuPrincipal(Singleton_Perfil.get_instance().tipo_perfil) if Singleton_Perfil.get_instance().tipo_perfil else Abrir_Login()
+        Label:
+            text: 'Panel de Suscripciones'
+            color:0,0,0,1
+            font_size: self.height*0.4
+            size_hint: (0.8,1)
+
+    BoxLayout:
+        orientation: 'vertical'
+        size: (1,1)
+        canvas.before:
+            Color: 
+                rgba: 1,0.95,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            size_hint: (1,1)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: (1,None)
+                pos_hint: {'top':1}
+                height: self.minimum_height
+                spacing: dp(10)
+                Elemento_Suscripcion:
+                    height: self.minimum_height
+                    
+

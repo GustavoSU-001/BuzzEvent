@@ -22,16 +22,24 @@ class Layout_Estandar(BoxLayout):
     def Abrir_EventosFavoritos(self):
         self.abrir_otra_pantalla("BAB_EventosFavoritos", transition= SlideTransition(direction="left"))
         
+    def Abrir_Cupones(self):
+        self.abrir_otra_pantalla("BAC_Cupones", transition= SlideTransition(direction="right"))
+        
+    def Abrir_Suscripciones(self):
+        self.abrir_otra_pantalla("BAD_Suscripciones", transition= SlideTransition(direction="right"))
+        
     def Abrir_Login(self):
         self.abrir_otra_pantalla("AA_Login", transition= SlideTransition(direction="right"))
 
     def Abrir_menu_Cuenta(self):
         mv=ModalView()
         
+    
     def Abrir_Ventana(self):
         rol=Singleton_Perfil.tipo_perfil
         if rol != "Estandar":
             self.Abrir_Login()
+            
             
         
         
