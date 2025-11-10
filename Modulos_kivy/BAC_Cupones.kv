@@ -1,0 +1,110 @@
+#:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
+
+
+
+
+
+<Elemento_Cupones@ButtonBehavior+BoxLayout>:
+    orientation: 'horizontal'
+    size_hint: (1,None)
+    height: root.ids.texto.height
+    valor: 50
+    tipo_valor: "%"
+    tipo_cupon: "descuento"
+    para: "eventos"
+    Label:
+        id: texto
+        text: f'Cupon de {root.tipo_cupon} por {root.valor}{root.tipo_valor} para {root.para}'
+        color: (0,0,0,1)
+        size_hint: (0.75,None)
+        font_size: (self.width/len(self.text))*2
+        text_size: (self.width,None)
+        height: self.font_size*3
+        padding_x: self.font_size*2
+        #shorten: True
+        
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            RoundedRectangle: 
+                size: self.size
+                pos: self.pos
+                radius: [self.size[1]*0.4,0,0,self.size[1]*0.4]
+            Color:
+                rgba: 1,1,1,1
+            RoundedRectangle: 
+                size: self.size[0]-1,self.size[1]-2
+                pos: self.pos[0]+1,self.pos[1]+1
+                radius: [self.size[1]*0.4,0,0,self.size[1]*0.4]
+            Color: 
+                rgba: (0,0,0,1)
+            Ellipse:
+                pos: self.right-(self.size[1]*0.4), self.pos[1]
+                size: (self.size[1]*0.4)*2,self.size[1]
+            Color: 
+                rgba: (0.7,0.7,1,1)
+            Ellipse:
+                pos: self.right-(self.size[1]*0.4)-1, self.pos[1]
+                size: (self.size[1]*0.4)*2,self.size[1]
+    BoxLayout:
+        size_hint: (0.25,None)
+        height: root.ids.texto.height
+        canvas.before:
+            Color:
+                rgba: 0.7,0.7,1,1
+            RoundedRectangle:
+                pos: self.pos
+                size:self.size
+                radius: [0,self.size[1]*0.4,self.size[1]*0.4,0]
+            
+
+
+<Layout_Cupones>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+    canvas.before:
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(50)
+        Button:
+            text: 'Atras'
+            size_hint: (0.2,1)
+            on_release: root.Regresar_MenuPrincipal(Singleton_Perfil.get_instance().tipo_perfil) if Singleton_Perfil.get_instance().tipo_perfil else Abrir_Login()
+        Label:
+            text: 'Billetera de Cupones'
+            color:0,0,0,1
+            font_size: self.height*0.4
+            size_hint: (0.8,1)
+
+    BoxLayout:
+        orientation: 'vertical'
+        size: (1,1)
+        canvas.before:
+            Color: 
+                rgba: 1,0.95,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            size_hint: (1,1)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: (1,None)
+                pos_hint: {'top':1}
+                height: self.minimum_height
+                spacing: dp(10)
+                Elemento_Cupones:
+                    #height: self.minimum_height
+
+
+
+
