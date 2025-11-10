@@ -1,0 +1,95 @@
+#: import Factory kivy.factory.Factory
+
+
+
+
+
+
+
+
+
+
+
+<Layout_Organizador>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+    padding: dp(10)
+    canvas.before:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    Boton_Cuenta:
+        size_hint: (1,0.2)
+        perfil: "Organizador"
+        nombre: "Nombresote"
+        apellido: "apellinator"
+        
+        
+            
+    
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (1,0.6)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size:self.size
+                pos: self.pos
+            Color:
+                rgba: 0.95, 0.9,0.9,1
+            Rectangle:
+                size:self.size[0]-dp(4),self.size[1]-dp(4)
+                pos:self.pos[0]+dp(2),self.pos[1]+dp(2)
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            size_hint: (1,1)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(5)
+                Button:
+                    text: "Mapa"
+                    size_hint: (1,None)
+                    height: dp(45)
+                    on_release: root.Abrir_Mapa()
+                Button:
+                    text: "Creación de Eventos"
+                    size_hint: (1,None)
+                    height: dp(45)
+                    on_release: root.Abrir_CreacionEventos()
+                Button:
+                    text: "Mis Eventos"
+                    size_hint: (1,None)
+                    height: dp(45)
+                    #on_release: root.Abrir_Cupones()
+                Button:
+                    text: "Estadisticas Globales"
+                    size_hint: (1,None)
+                    height: dp(45)
+                    #on_release: root.Abrir_Suscripciones()
+                Button:
+                    text: "Suscripciones"
+                    size_hint: (1,None)
+                    height: dp(45)
+                    #on_release: root.Abrir_Suscripciones()
+                Button:
+                    text: "Configuración"
+                    size_hint: (1,None)
+                    height: dp(45)
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(45)
+        Button:
+            text: 'Cerrar Sesión'
+            pos_hint: {"center_x":0.5}
+            size: (0.4,1)
+            on_release: Factory.Menu_Cuenta(login=root.Abrir_Login).open()
+
+

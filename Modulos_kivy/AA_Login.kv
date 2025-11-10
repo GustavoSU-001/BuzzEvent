@@ -87,7 +87,8 @@
             size: self.size
 
     BoxLayout:
-        size_hint: (0.5,1)
+        size_hint: (None,1)
+        width: self.height
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         canvas.before:
             Color:
@@ -144,6 +145,8 @@
             font_size: sp(22)
             size_hint: 1,None
             height: dp(30)
+            #pos_hint: {"center_x":0.5}
+            halign: 'center'
             on_release: root.Boton_recuperar_contrasena()
             
         
@@ -155,6 +158,7 @@
             font_size: sp(22)
             size_hint: 1,None
             height: dp(35)
+            halign: 'center'
             on_release: root.Boton_registrar_cuenta()
 
     Button_Login:

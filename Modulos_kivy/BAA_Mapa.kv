@@ -5,9 +5,6 @@
 #:import Factory kivy.factory.Factory
 #:import ButtonBehavior kivy.uix.behaviors.button
 #:import StringProperty kivy.properties.StringProperty
-#:import StencilPush kivy.graphics.stencil_instructions.StencilPush
-#:import StencilPop kivy.graphics.stencil_instructions.StencilPop
-#:import StencilUse kivy.graphics.stencil_instructions.StencilUse
 #:import cos math.cos
 #:import sin math.sin
 #:import pi math.pi
@@ -156,7 +153,6 @@
         multiline: True
         text: root.texto
         background_disabled_normal: ''
-<<<<<<< Updated upstream
         disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
     Label:
         text: root.ubicacion
@@ -164,16 +160,6 @@
         height: dp(50)
         font_size: ((self.width/len(self.text))*2) if self.width and self.text else self.height*0.6
         text_size: (self.width,None)
-=======
-        disabled: True#False if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else True
-    Label:
-        text: root.ubicacion
-        size_hint: (1,None)
-        text_size: (self.width,None)
-
-        height: dp(35)
-        font_size: self.height*0.4
->>>>>>> Stashed changes
         
         color: (0,0,0,1)
         canvas.before:

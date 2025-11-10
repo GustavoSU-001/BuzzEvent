@@ -3,8 +3,20 @@
 <Elemento_Suscripcion@BoxLayout>:
     orientation: 'vertical'
     size_hint: (1,None)
+    padding: [dp(10)]
+    valor: "$20.000"
+    spacing: dp(4)
+    
+    canvas.before:
+        Color:
+            rgba: 1,1,1,1
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [dp(10)]
     Label:
-        text: 'Suscripcion Anual'
+        text: 'Organizador'
+        color: (0,0,0,1)
         size_hint: (1,None)
         height: dp(35)
         canvas.before:
@@ -13,15 +25,186 @@
             Rectangle: 
                 size:self.size 
                 pos: self.pos
-    TextInput:
-        text: 'Este es un ejemplo de descripción. Lorem ipsum dolor sit amet consectetur adipiscing elit justo, suscipit congue lectus pellentesque vulputate imperdiet feugiat, est ligula augue nibh litora egestas torquent. Lobortis tellus integer potenti ornare commodo duis platea accumsan sed proin, leo mauris iaculis et mollis metus consequat orci ullamcorper, sapien euismod venenatis eros dapibus arcu cubilia facilisi posuere. Metus mauris porttitor pharetra hendrerit dis interdum netus, sociis aliquam nulla leo tincidunt himenaeos semper, tellus suspendisse venenatis etiam integer proin.'
-        size_hint: (0.8,None)
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (1,None)
         height: self.minimum_height
-        hint_text: "Escribe una descripción"
-        multiline: True
+        Label:
+            text: 'Precio Mensual'
+            color: (0,0,0,1)
+            font_size: dp(20)
+            size_hint: (None,None)
+            width: self.texture_size[0]*2
+            pos_hint: {'center_x':0.5}
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color:
+                    rgba: 1,0.8,0.4,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+        Label:
+            text: f'{root.valor}'
+            color: (0,0,0,1)
+            font_size: dp(30)
+            size_hint: (1,None)
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color: 
+                    rgba: 0,0,0,1
+                Line:
+                    width: dp(3)
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1]+self.size[1])
+                Color: 
+                    rgba: 1,0.8,0.1,1
+                Line:
+                    width: dp(1)
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1]+self.size[1])
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (1,None)
+        height: self.minimum_height
+        Label:
+            text: 'Permisos'
+            color: (0,0,0,1)
+            font_size: dp(20)
+            size_hint: (None,None)
+            width: self.texture_size[0]*1.1
+            pos_hint: {'center_x':0.5}
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color:
+                    rgba: 1,0.8,0.4,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+        Label:
+            text: 'Creación de Eventos'
+            color: (0,0,0,1)
+            font_size: dp(30)
+            size_hint: (None,None)
+            pos_hint: {'center_x':0.5}
+            width: self.texture_size[0]*1.1
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color: 
+                    rgba: 0,0,0,1
+                Line:
+                    width: 1
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1])
+        Label:
+            text: 'Visualización de Estadisticas'
+            color: (0,0,0,1)
+            font_size: dp(30)
+            size_hint: (1,None)
+            text_size: (self.width,None)
+            halign: 'center'
+            height: self.texture_size[1]#self.font_size+dp(3)
+            canvas.before:
+                Color: 
+                    rgba: 0,0,0,1
+                Line:
+                    width: dp(3)
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1]+self.size[1])
+                Color: 
+                    rgba: 1,0.8,0.1,1
+                Line:
+                    width: dp(1)
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1]+self.size[1])
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (1,None)
+        height: self.minimum_height
+        Label:
+            text: 'Estadisticas'
+            color: (0,0,0,1)
+            font_size: dp(20)
+            size_hint: (None,None)
+            width: self.texture_size[0]*1.1
+            pos_hint: {'center_x':0.5}
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color:
+                    rgba: 1,0.8,0.4,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+        Label:
+            text: 'Eventos'
+            color: (0,0,0,1)
+            font_size: dp(30)
+            size_hint: (None,None)
+            pos_hint: {'center_x':0.5}
+            width: self.texture_size[0]*1.1
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color: 
+                    rgba: 0,0,0,1
+                Line:
+                    width: 1
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1])
+        Label:
+            text: 'Encuestas'
+            color: (0,0,0,1)
+            font_size: dp(30)
+            size_hint: (1,None)
+            height: self.font_size+dp(3)
+            canvas.before:
+                Color: 
+                    rgba: 0,0,0,1
+                Line:
+                    width: dp(3)
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1]+self.size[1])
+                Color: 
+                    rgba: 1,0.8,0.1,1
+                Line:
+                    width: dp(1)
+                    points: (self.pos[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1],self.pos[0]+self.size[0],self.pos[1]+self.size[1])
+    Boton_Elemento:
+        size_hint: (0.8,None)
         pos_hint: {'center_x':0.5}
-        background_disabled_normal: ''
-        disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+        height: dp(35)
+        
+        
+<Boton_Elemento@ButtonBehavior+BoxLayout+Label>:
+    size_hint: (0.8,None)
+    text: 'Comprar Suscripción'
+    color: (1,1,1,1)
+    bg_color: (0.7,1,1,1)
+    font_size: self.height*0.6
+    text_size: (self.width,None)
+    halign: 'center'
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [self.size[1]*0.2]
+        Color:
+            rgba: root.bg_color
+        RoundedRectangle:
+            size: self.size[0]-2,self.size[1]-2
+            pos: self.pos[0]+1,self.pos[1]+1
+            radius: [self.size[1]*0.2]
+        
+        
+                
+        
+    
+    # TextInput:
+    #     text: 'Este es un ejemplo de descripción. Lorem ipsum dolor sit amet consectetur adipiscing elit justo, suscipit congue lectus pellentesque vulputate imperdiet feugiat, est ligula augue nibh litora egestas torquent. Lobortis tellus integer potenti ornare commodo duis platea accumsan sed proin, leo mauris iaculis et mollis metus consequat orci ullamcorper, sapien euismod venenatis eros dapibus arcu cubilia facilisi posuere. Metus mauris porttitor pharetra hendrerit dis interdum netus, sociis aliquam nulla leo tincidunt himenaeos semper, tellus suspendisse venenatis etiam integer proin.'
+    #     size_hint: (0.8,None)
+    #     height: self.minimum_height
+    #     hint_text: "Escribe una descripción"
+    #     multiline: True
+    #     pos_hint: {'center_x':0.5}
+    #     background_disabled_normal: ''
+    #     disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    
     
 
         
@@ -57,6 +240,7 @@
     BoxLayout:
         orientation: 'vertical'
         size: (1,1)
+        padding: [dp(10),dp(10)]
         canvas.before:
             Color: 
                 rgba: 1,0.95,0,1
@@ -73,7 +257,7 @@
                 size_hint: (1,None)
                 pos_hint: {'top':1}
                 height: self.minimum_height
-                spacing: dp(10)
+                spacing: dp(20)
                 Elemento_Suscripcion:
                     height: self.minimum_height
                     

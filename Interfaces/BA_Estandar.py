@@ -1,5 +1,5 @@
-from kivy.uix.modalview import ModalView
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.modalview import ModalView
 from kivy.uix.screenmanager import SlideTransition
 from kivy.properties import ObjectProperty
 
