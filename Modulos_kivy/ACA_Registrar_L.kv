@@ -35,6 +35,8 @@
         write_tab: False
         password: root.password
 
+
+
 <Terminos_y_Condiciones@BoxLayout>:
     orientation: 'horizontal'
     size_hint: 1, None
@@ -189,9 +191,10 @@
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    
                 Input_Registrar_L:
                     id: telefono_input
-                    t_text: 'Numero de Teléfono'
+                    t_text: 'Teléfono'
                     password: False
                     size_hint_y: None
                     height: dp(40)
@@ -213,10 +216,25 @@
                 Input_Registrar_L:
                     id: contrasena_input
                     t_text: 'Contraseña'
-                    password: False
+                    password: True
                     size_hint_y: None
                     height: dp(40)
                     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+                # --- AÑADE ESTE LABEL DEBAJO DE LA CONTRASEÑA ---
+                Label:
+                # --- USANDO EL SIGNO '+' PARA UNIR ---
+                    text: ' - Mínimo 8 caracteres\n - Mayúscula\n - Minúscula\n - Número\n - Símbolo (!@#...)'
+                    color: 0.3, 0.3, 0.3, 1
+                    font_size: '12sp'
+                    halign: 'left'
+                    valign: 'top'
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width - dp(20), None 
+                    padding: dp(10), dp(5)
+            # ------------------------------------------------                   
+                    
     Terminos_y_Condiciones:
         id: terminos_y_condiciones
         size_hint_y: None
