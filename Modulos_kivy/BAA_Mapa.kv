@@ -258,7 +258,10 @@
                     
                 
 
-
+<Boton_personalizado@ButtonBehavior+Image>:
+    size_hint: (None,1)
+    width: self.height
+    background_color: (1,0.9,1,1)
          
         
 
@@ -293,7 +296,13 @@
                 size_hint_x: None
                 width: self.height
                 #on_release: root.dismiss() if root.dismiss else None
+            #RelativeLayout:
+                #Boton_personalizado:
+            #    Image:
+                    
+            #        source: "Static\Imagenes\share-nodes-solid-full.svg"
             Button:
+                #source: "Static\Imagenes\share-nodes-solid-full.svg"
                 text: 'Compartir'
                 color: (0,0,0,1)
                 background_color: (0.2,0.2,0.9,1)

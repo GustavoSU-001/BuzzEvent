@@ -87,7 +87,7 @@
             size: self.size
 
     BoxLayout:
-        size_hint: (None,1)
+        size_hint: (None,0.2)
         width: self.height
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         canvas.before:
@@ -104,64 +104,74 @@
                 size: self.size[0] - dp(4), self.size[1] - dp(4)
                 radius: [20]
     
-    Input_Login:
-        id: input_usuario
-        text: "Estandar"
-        size_hint_y: None
-        height: dp(50)
-        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        bg_icon: 0.2,0.6,1,1
-        bg_text: 0.9,0.9,0.9,1
-        t_text: 'Rut'
-    
-    Input_Login:
-        id: input_contraseña
-        size_hint_y: None
-        height: dp(50)
-        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        bg_icon: 1,0.4,0.7,1
-        bg_text: 0.9,0.9,0.9,1
-        t_text: 'Contraseña'
-        password: True
-    
-    BoxLayout: 
+    BoxLayout:
         orientation: 'vertical'
-        size_hint: 0.9,None
-        #height: dp(50)
-        spacing: dp(10)
-        pos_hint: {"center_x":0.5}
-        canvas.before:
-            Color:
-                rgba: 0.2,0.6,1,1
-            RoundedRectangle:
-                pos: self.pos
-                size: self.size
-                radius: [20]
-        Button:
-            text: '¿Olvidaste tu contraseña?'
-            text_size: (self.width,None)
-            color: 0,0,0.5,1
-            background_color: 1,1,0,0.5
-            font_size: sp(22)
-            size_hint: 1,None
-            height: dp(30)
-            #pos_hint: {"center_x":0.5}
-            halign: 'center'
-            on_release: root.Boton_recuperar_contrasena()
-            
+        size_hint: (1,0.6)
+        spacing: dp(20)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         
-        Button:
-            text: '¿Desea Registrarse?'
-            text_size: (self.width,None)
-            color: 0,0,0.5,1
-            background_color: 1,1,0,0.5
-            font_size: sp(22)
-            size_hint: 1,None
-            height: dp(35)
-            halign: 'center'
-            on_release: root.Boton_registrar_cuenta()
 
-    Button_Login:
-        text: 'Iniciar Sesión'
-        on_release: root.Iniciar_Sesion(root.ids.input_usuario.ids.usuario.text)
+        Input_Login:
+            id: input_usuario
+            text: "Organizador"
+            size_hint_y: None
+            height: dp(50)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            bg_icon: 0.2,0.6,1,1
+            bg_text: 0.9,0.9,0.9,1
+            t_text: 'Rut'
+        
+        Input_Login:
+            id: input_contraseña
+            size_hint_y: None
+            height: dp(50)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            bg_icon: 1,0.4,0.7,1
+            bg_text: 0.9,0.9,0.9,1
+            t_text: 'Contraseña'
+            password: True
+        
+        BoxLayout: 
+            orientation: 'vertical'
+            size_hint: 0.9,None
+            #height: dp(50)
+            spacing: dp(10)
+            pos_hint: {"center_x":0.5}
+            canvas.before:
+                Color:
+                    rgba: 0.2,0.6,1,1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [20]
+            Button:
+                text: '¿Olvidaste tu contraseña?'
+                text_size: (self.width,None)
+                color: 0,0,0.5,1
+                background_color: 1,1,0,0.5
+                font_size: sp(22)
+                size_hint: 1,None
+                height: dp(30)
+                #pos_hint: {"center_x":0.5}
+                halign: 'center'
+                on_release: root.Boton_recuperar_contrasena()
+                
+            
+            Button:
+                text: '¿Desea Registrarse?'
+                text_size: (self.width,None)
+                color: 0,0,0.5,1
+                background_color: 1,1,0,0.5
+                font_size: sp(22)
+                size_hint: 1,None
+                height: dp(35)
+                halign: 'center'
+                on_release: root.Boton_registrar_cuenta()
+
+        Button_Login:
+            text: 'Iniciar Sesión'
+            on_release: root.Iniciar_Sesion(root.ids.input_usuario.ids.usuario.text)
+    BoxLayout:
+        size_hint: (1,0.2)
+
 

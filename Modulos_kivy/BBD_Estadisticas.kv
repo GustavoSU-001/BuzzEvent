@@ -1,0 +1,51 @@
+#: import Factory kivy.factory.Factory
+
+
+
+
+
+
+
+<Layout_Estadisticas>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+    canvas.before:
+        Color:
+            rgba:1,1,1,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(50)
+        Button:
+            text: 'Atras'
+            size_hint: (0.2,1)
+            on_release: root.Abrir_MenuPrincipal() if Singleton_Perfil.get_instance().tipo_perfil else Abrir_Login()
+        Label:
+            text: 'Estadisticas Globales'
+            color:0,0,0,1
+            font_size: self.height*0.4
+            size_hint: (0.8,1)
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10)
+        spacing: dp(10)
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            BoxLayout:
+                id: Lista_Estadisticas
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(5)
+
+
+
+
+
+

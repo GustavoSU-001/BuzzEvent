@@ -23,6 +23,9 @@ class Layout_Organizador(BoxLayout):
     def Abrir_CreacionEventos(self):
         self.abrir_otra_pantalla("BBB_CreacionEventos", transition= SlideTransition(direction="left"))
         
+    def Abrir_Estadisticas(self):
+        self.abrir_otra_pantalla("BBD_Estadisticas", transition= SlideTransition(direction="left"))
+        
     def Abrir_Cupones(self):
         self.abrir_otra_pantalla("BAC_Cupones", transition= SlideTransition(direction="right"))
         
