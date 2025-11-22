@@ -165,6 +165,11 @@ class Layout_CreacionEventos(BoxLayout):
     def Abrir_Login(self):
         self.abrir_otra_pantalla("AA_Login", transition= SlideTransition(direction="right"))
         
+    
+    def Formatear_NombreEvento(self):
+        texto = self.ids.NombreEvento.text
+        
+        
         
         
         

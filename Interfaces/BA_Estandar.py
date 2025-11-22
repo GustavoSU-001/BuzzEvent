@@ -1,3 +1,4 @@
+from kivy.uix.accordion import StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.modalview import ModalView
 from kivy.uix.screenmanager import SlideTransition
@@ -5,6 +6,9 @@ from kivy.properties import ObjectProperty
 
 from Modulos.Singleton.Perfil import Singleton_Perfil
 
+
+class FotoPerfil(BoxLayout):
+    imagen = StringProperty('')
 
 class Menu_Cuenta(ModalView):
     login = ObjectProperty(None)

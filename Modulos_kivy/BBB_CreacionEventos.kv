@@ -7,6 +7,7 @@
     password: False
     orientation: 'horizontal'
     pos_hint: {'center_y': 0.5}
+    letras_permitido: None
     canvas.before:
         Color:
             rgba: 0,0,0,1
@@ -25,6 +26,8 @@
         id: usuario
         hint_text: root.t_text
         multiline: True
+        
+        allowed_chars: root.letras_permitido if root.letras_permitido else None
         font_size: root.size[1]*0.4
         size_hint: 0.8,0.9
         foreground_color: 0,0,0,1
@@ -34,6 +37,7 @@
         padding: (dp(10),((self.height - self.font_size)/2)-dp(2),dp(15),((self.height - self.font_size)/2)-dp(2))
         write_tab: False
         password: root.password
+        
 
 <Fechas_ListaInvitados@BoxLayout>:
     orientation: 'horizontal'
@@ -87,14 +91,14 @@
         TextInput:
             id: rut_invitado
             hint_text: "Ingresar Rut"
-            font_size: self.height*0.5
+            font_size: self.height*0.4
             color: 0,0,0,1
             pos_hint: {'top':1}
             size_hint: (1,None)
             height: dp(30)
             background_disabled_normal: ''
         Button:
-            text: 'Eliminar Invitado'
+            text: 'X'
             font_size: self.height*0.5
             size_hint: (1,None)
             height: dp(30)
@@ -280,6 +284,8 @@
                     password: False
                     size_hint_y: None
                     height: dp(40)
+                    letras_permitido: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_'
+                    
                 Input_CreacionEventos:
                     id: Ubicación
                     t_text: 'Ubicación'

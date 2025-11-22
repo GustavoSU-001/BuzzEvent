@@ -203,6 +203,7 @@ class Layout_Mapa(FloatLayout):
         
         # Agregamos el MapView al contenedor.
         # A partir de este momento, new_map_view.parent ya no es None.
+        
         map_container.add_widget(new_map_view)
         print("Nueva instancia de MapView añadida y lista.")
 
@@ -527,6 +528,7 @@ class Layout_Mapa(FloatLayout):
             
             # Creamos y guardamos el nuevo marcador usando la función que ya usa Miniatura_Evento
             # Asignamos el resultado a self.marker (la propiedad de la clase)
+            
             self.marker = self.Agregar_Marcador(
                 lat=self.latitud, 
                 lon=self.longitud, 

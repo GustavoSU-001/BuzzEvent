@@ -3,7 +3,22 @@
 
 
 
+<GraficoBarra>:
+    size_hint: (1,None)
+    height: self.width/1.518
+    pos_hint: {'center_x':0.55}
+    padding_x: dp(5)
 
+<GraficoPastel>:
+    size_hint: (1,None)
+    height: self.width/1.518
+    pos_hint: {'center_x':0.55}
+
+<GraficoLinea>:
+    size_hint: (1,None)
+    height: self.width/1.518
+    pos_hint: {'center_x':0.55}
+    
 
 
 <Layout_Estadisticas>:
@@ -31,8 +46,7 @@
 
     BoxLayout:
         orientation: 'vertical'
-        padding: dp(10)
-        spacing: dp(10)
+        spacing: dp(15)
         ScrollView:
             do_scroll_x: False
             do_scroll_y: True
@@ -42,7 +56,7 @@
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: dp(5)
+                spacing: dp(15)
 
 
 

@@ -1,34 +1,15 @@
 #: import Factory kivy.factory.Factory
 
-<FotoPerfil@BoxLayout>:
-    size_hint: None, None
-    size: dp(100), dp(100)  # Puedes ajustar este tamaño según necesites
-    pos_hint: {'center_x': .5, 'center_y': .5}
-    imagen: None
-    
-    StencilView:
-        size_hint: None, None
-        size: root.size
-        
-        canvas.before:
-            Color:
-                rgba: 0,0,0,1
-            Ellipse: 
-                size: self.size
-                pos: self.pos
-            #Color:
-            #    rgba: 1, 1, 1, 1
-            #Ellipse:
-            #    size: self.size[0]-2,self.size[1]-2
-            #    pos: self.pos[0]+1,self.pos[1]+1
-        
-        Image:
-            size_hint: None, None
-            size: root.size[0]-2,root.size[1]-2
-            source: root.imagen if root.imagen else None
-            allow_stretch: True
-            keep_ratio: False
-            #pos: self.parent.pos[0]+1,self.parent.pos[1]+1
+<FotoPerfil>:
+    size_hint: None, 1
+    width: self.height
+    imagen: 'Static/Imagenes/foto_perfil.png'
+    pos_hint: {'center_x':0.5}
+    Image:
+        source: root.imagen
+        size_hint: (1,1)
+
+            
 
 
 <Menu_Cuenta@ModalView>:
@@ -71,7 +52,7 @@
 <Boton_Cuenta@ButtonBehavior+BoxLayout>:
     orientation: 'vertical'
     perfil: "Sin Perfil"
-    imagen: None
+    imagen: 'Static\\Imagenes\\foto_perfil.png'
     nombre: "Sin Nombre"
     apellido: "Sin Apellido"
     canvas.before:
@@ -143,6 +124,7 @@
         perfil: "Usuario Estandar"
         nombre: "Nombrerito"
         apellido: "apellido"
+        imagen: 'Static\\Imagenes\\foto_perfil.png'
         
         
             

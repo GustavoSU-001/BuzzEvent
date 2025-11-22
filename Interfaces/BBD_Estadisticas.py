@@ -60,7 +60,7 @@ class Layout_Estadisticas(BoxLayout):
         
         for grafico in datos:
             # Propiedades de layout para asegurar que se muestren en el ScrollView
-            layout_props = {'size_hint_y': None, 'height': '350dp'} 
+            layout_props = {'size_hint_y': None, 'height': '415dp'} 
             
             if grafico['tipo'] == 'Barras':
                 barra = GraficoBarra(**layout_props)
@@ -104,6 +104,8 @@ class GraficoBarra(BoxLayout):
         super().__init__(**kwargs)
         print("Creando gráfico de barras...")
         
+        
+        
         # Opcional: Establecer orientación, si la clase no se usa en un .kv
         # self.orientation = 'vertical' 
         
@@ -115,11 +117,14 @@ class GraficoBarra(BoxLayout):
         y_pos = np.arange(len(objects))
         performance = valores#[10, 8, 6, 4, 2]
 
+        w=4
+        h=w/1.618
+        
         # 2. Crear la figura y los ejes de Matplotlib
-        fig, ax = plt.subplots(figsize=(5, 4)) # Define el tamaño de la figura (opcional)
+        fig, ax = plt.subplots(figsize=(w, h)) # Define el tamaño de la figura (opcional)
 
         # 3. Crear el gráfico de barras
-        ax.bar(y_pos, performance, align='center', alpha=0.7, color='teal')
+        ax.bar(y_pos, performance, align='center', alpha=0.65, color='teal')
         
         # 4. Configurar etiquetas y título
         ax.set_xticks(y_pos) 

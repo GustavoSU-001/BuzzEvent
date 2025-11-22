@@ -261,7 +261,13 @@
 <Boton_personalizado@ButtonBehavior+Image>:
     size_hint: (None,1)
     width: self.height
-    background_color: (1,0.9,1,1)
+    #background_color: (1,0.9,1,1)
+    canvas.before:
+        Color: 
+            rgba:1,1,1,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
          
         
 
@@ -287,29 +293,35 @@
                     size: self.size
                     pos: self.pos
             
-            Button:
+            #Button:
+            Boton_personalizado:
+                source: 'Static\Imagenes\Fijas (guardar).png'
                 text: 'Fijar'
-                color: (0,0,0,1)
-                background_color: (0.5,0.5,0.5,1)
+                color: (0.5,0.5,0.5,1)
+                #background_color: (0.5,0.5,0.5,1)
                 background_normal: ''
                 background_down: ''
+                size_hint_y: 0.5
                 size_hint_x: None
                 width: self.height
+                pos_hint: {'center_y':0.5}
                 #on_release: root.dismiss() if root.dismiss else None
             #RelativeLayout:
-                #Boton_personalizado:
             #    Image:
                     
             #        source: "Static\Imagenes\share-nodes-solid-full.svg"
-            Button:
-                #source: "Static\Imagenes\share-nodes-solid-full.svg"
+            #Button:
+            Boton_personalizado:
+                source: "Static\Imagenes\compartir.png"
                 text: 'Compartir'
-                color: (0,0,0,1)
-                background_color: (0.2,0.2,0.9,1)
+                color: (0,0,1,1)
+                #background_color: (0.2,0.2,0.9,1)
                 background_normal: ''
                 background_down: ''
+                size_hint_y: 0.5
                 size_hint_x: None
                 width: self.height
+                pos_hint: {'center_y':0.5}
                 #on_release: root.dismiss() if root.dismiss else None
             Label:
                 text: root.titulo
