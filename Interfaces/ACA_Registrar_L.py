@@ -6,6 +6,8 @@ from kivy.uix.popup import Popup #Para mostrar errores
 from kivy.uix.label import Label #label para el popup
 from kivy.clock import Clock
 from functools import partial
+
+import webbrowser
 #ID del proyecto de Firebase
 PROJECT_ID = "eva3-72fb2"
 
@@ -96,6 +98,12 @@ class Layout_Registrar_L(BoxLayout):
         _color_original_texto_edad = (1, 1, 1, 1) # Un color por defecto (blanco)
         self._telefono_blocker = False
         self._alias_blocker = False
+        
+    def go_to_url(self, url):
+        """Abre la URL especificada en el navegador por defecto del sistema."""
+        print(f"Abriendo URL: {url}")
+        # Usa el método open() de webbrowser
+        webbrowser.open(url)
 
     def _bind_inputs(self,dt):
         try:

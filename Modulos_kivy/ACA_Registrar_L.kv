@@ -42,10 +42,11 @@
     size_hint: 1, None
     height: dp(30)
     width: self.minimum_width
+    link: None
     #pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     BoxLayout:
         orientation: 'horizontal'
-        spacing: dp(5)
+        spacing: dp(10)
         size_hint_x: None
         CheckBox:
             id: checkbox_Registrar_L
@@ -53,32 +54,38 @@
             size_hint: None, None
             size: dp(20), dp(20)
             pos_hint: {'center_y': 0.5}
+            background_checkbox_down: ''
             canvas: 
                 Color:
                     rgba: (0, 0, 0, 1) if self.active else (0.7, 0.7, 0.7, 1)
                 Ellipse:
                     pos: self.pos
                     size: self.size
-        Label:
-            text: 'Acepto los '
-            color: 0,0,0,1
-            font_size: sp(14)
-            size_hint_y: None
-            size_hint_x: None
-            width: root.minimum_width
-            height: dp(20)
-            halign: 'right'
-            valign: 'middle'
-        Button:
-            text: 'Términos y Condiciones'
-            background_color: 0,0,0,0
-            color: 0,0,1,1
-            font_size: sp(14)
-            size_hint_y: None
-            size_hint_x: None
-            height: dp(20)
-            halign: 'left'
-            valign: 'middle'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (None,None)
+            spacing: sp(10)
+
+            Label:
+                text: 'Acepto los '
+                color: 0,0,0,1
+                font_size: sp(14)
+                size_hint_y: None
+                size_hint_x: None
+                height: dp(20)
+                #halign: 'right'
+                #valign: 'middle'
+            Button:
+                text: 'Términos y Condiciones'
+                background_color: 0,0,0,0
+                color: 0,0,1,1
+                font_size: sp(14)
+                size_hint_y: None
+                size_hint_x: None
+                height: dp(20)
+                #halign: 'left'
+                #valign: 'middle'
+                on_press: root.link('https://docs.google.com/document/d/1FGVFyQ7FdgcXJEwV-shQkc6rpNGsHmVNgnOPRKmmF4k/edit?usp=sharing') if root.link else None
 
 <Button_registrar@ButtonBehavior+BoxLayout>:
     text: 'Sin Texto'
@@ -236,6 +243,7 @@
                     
     Terminos_y_Condiciones:
         id: terminos_y_condiciones
+        link: root.go_to_url
         size_hint_y: None
         height: dp(30)
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
