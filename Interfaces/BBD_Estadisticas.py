@@ -4,7 +4,7 @@ from kivy.uix.screenmanager import SlideTransition
 
 import matplotlib.pyplot as plt
 import numpy as np
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from kivy_garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
 
 
