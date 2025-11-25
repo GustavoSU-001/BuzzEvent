@@ -29,6 +29,7 @@ from Interfaces.BAD_Suscripciones import Layout_Suscripciones
 from Interfaces.BB_Organizador import Layout_Organizador
 from Interfaces.BBB_CreacionEventos import Layout_CreacionEventos
 from Interfaces.BBC_MisEventos import Layout_MisEventos
+from Interfaces.BBCA_InterfazEvento import Layout_InterfazEvento
 from Interfaces.BBD_Estadisticas import Layout_Estadisticas
 
 from Interfaces.BC_Administrador import Layout_Administrador
@@ -159,18 +160,47 @@ class BB_Screen(Screen):
 class BBB_Screen(Screen):
     def __init__(self, **kwargs):
         super(BBB_Screen,self).__init__(**kwargs)
-        layout= Layout_CreacionEventos(self.abrir_otra_pantalla)
-        self.add_widget(layout)
+        self.layout= Layout_CreacionEventos(self.abrir_otra_pantalla)
+        self.add_widget(self.layout)
 
     def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
         self.manager.transition = transition  # Set the transition for the screen change
         self.manager.current = nueva_pantalla
+    
+    def on_pre_enter(self, *args):
+        if hasattr(self.layout, 'Abrir_Ventana'):
+            self.layout.Abrir_Ventana()
+            
+    def on_pre_leave(self, *args):
+        if hasattr(self.layout, 'Cerrar_Ventana'):
+            print("Hola")
+            self.layout.Cerrar_Ventana()
         
         
 class BBC_Screen(Screen):
     def __init__(self, **kwargs):
         super(BBC_Screen,self).__init__(**kwargs)
         self.layout= Layout_MisEventos(self.abrir_otra_pantalla)
+        self.add_widget(self.layout)
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+        
+    def on_pre_enter(self, *args):
+        if hasattr(self.layout, 'Abrir_Ventana'):
+            self.layout.Abrir_Ventana()
+            
+    def on_pre_leave(self, *args):
+        if hasattr(self.layout, 'Cerrar_Ventana'):
+            print('Hola')
+            self.layout.Cerrar_Ventana()
+        
+        
+class BBCA_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BBCA_Screen,self).__init__(**kwargs)
+        self.layout= Layout_InterfazEvento(self.abrir_otra_pantalla)
         self.add_widget(self.layout)
 
     def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
@@ -240,6 +270,7 @@ class BuzzEvent(App):
         Builder.load_file(r"Modulos_kivy/BB_Organizador.kv")
         Builder.load_file(r"Modulos_kivy/BBB_CreacionEventos.kv")
         Builder.load_file(r"Modulos_kivy/BBC_MisEventos.kv")
+        Builder.load_file(r"Modulos_kivy/BBCA_InterfazEvento.kv")
         Builder.load_file(r"Modulos_kivy/BBD_Estadisticas.kv")
         Builder.load_file(r"Modulos_kivy/BC_Administrador.kv")
     
@@ -256,6 +287,7 @@ class BuzzEvent(App):
         sm.add_widget(BB_Screen(name="BB_Organizador"))
         sm.add_widget(BBB_Screen(name="BBB_CreacionEventos"))
         sm.add_widget(BBC_Screen(name="BBC_MisEventos"))
+        sm.add_widget(BBCA_Screen(name="BBCA_InterfazEvento"))
         sm.add_widget(BBD_Screen(name="BBD_Estadisticas"))
         sm.add_widget(BC_Screen(name="BC_Administrador"))
         

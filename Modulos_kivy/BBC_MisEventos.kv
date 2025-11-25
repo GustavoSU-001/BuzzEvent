@@ -11,7 +11,67 @@
 
 
 
+<Elementos_MisEventos@ButtonBehavior+BoxLayout>:
+    orientation: 'vertical'
+    size_hint: (1,None)
+    height: self.minimum_height
+    padding: dp(10)
+    titulo: 'Sin titulo'
+    estado: 'Terminado'
+    ubicacion: 'Sin ubicación'
+    #accion: None
+    #on_press: root.accion(root.id) if root.accion else None
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        RoundedRectangle: 
+            size: self.size
+            pos: self.pos
+            radius: [dp(5)]
+        Color: 
+            rgba: (0.2,0.9,0.7,1) if root.estado == 'Terminado' else ((1,1,0.1,1) if root.estado == 'En Espera' else (1,0.3,0.1,1))
+        Line: 
+            width: 2
+            points: (self.x,self.y+3,self.x+self.width,self.y+3)
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(30)
 
+        Label:
+            text: root.titulo
+            color: (1,1,1,1)
+            size_hint: 0.9,1
+            font_size: self.height*0.6
+            halign: 'left'
+            shorten: True
+            shorten_post: "..."
+            shorten_from: 'right'
+        Image:
+            source: 'Static\\Imagenes\\eventolisto(b).png' if root.estado == 'Terminado' else ('Static\\Imagenes\\tiemporestante.png' if root.estado == 'En Espera' else 'Static\\Imagenes\\eventocancelado.png')
+            size_hint: (None,1)
+            width: self.height
+            color: (0,1,0,1) if root.estado == 'Terminado' else ((1,1,0,1) if root.estado=="En Espera" else ((1,0,0,1)))
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(25)
+        Label:
+            text: root.ubicacion
+            shorten: True
+            size_hint: (1,1)
+            font_size: self.height*0.7
+            text_size: (self.width,self.height)
+            shorten_post: '...'
+            shorten_from: 'right'
+        
+            
+
+        
+    
+        
+    
 
 
 
@@ -49,11 +109,26 @@
             do_scroll_y: True
             scroll_y: 1
             BoxLayout:
-                #id: Lista_Estadisticas
+                id: Lista_MisEventos
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: dp(15)
+                spacing: dp(5)
+                #Elementos_MisEventos:
+                #    titulo:'Titulo Evento'
+                #    estado: 'Terminado'
+                #    ubicacion: 'Lugar en el que se planea desarrollar el evento, mas especificamente la ubicación del local o terreno.'
+                #    on_press: root.Abrir_InterfazEvento()
+                #Elementos_MisEventos:
+                #    titulo:'Titulo Evento'
+                #    estado: 'En Espera'
+                #    ubicacion: 'Lugar en el que se planea desarrollar el evento, mas especificamente la ubicación del local o terreno.'
+                #    on_press: root.Abrir_InterfazEvento()
+                #Elementos_MisEventos:
+                #    titulo:'Titulo Evento'
+                #    estado: 'Suspendido'
+                #    ubicacion: 'Lugar en el que se planea desarrollar el evento, mas especificamente la ubicación del local o terreno.'
+                #    on_press: root.Abrir_InterfazEvento()
 
 
 

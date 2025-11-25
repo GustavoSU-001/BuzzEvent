@@ -1,0 +1,279 @@
+#:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
+
+<Interfaz_Estadisticas@BoxLayout>:
+    
+
+
+
+
+<Interfaz_Informacion@BoxLayout>:
+    titulo: 'Sin Titulo'
+    texto: "Sin Texto"
+    calificacion: 4
+    ubicacion: ''
+    size_hint_y: None
+    orientation: 'vertical'
+    height: self.minimum_height
+    padding: dp(5)
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: self.size[0]-2,self.size[1]-2
+            pos: self.pos[0]+1,self.pos[1]+1
+
+        
+    Label:
+        id: titulo_info
+        size_hint: (1,None)
+        height: dp(40)
+        font_size: self.height*0.8
+        color: (0,0,0,1)
+        text: root.titulo
+    TextInput:
+        id: descripcion_info
+        size_hint: (1,None)
+        height: self.minimum_height
+        hint_text: "Escribe una descripción"
+        multiline: True
+        text: root.texto
+        background_disabled_normal: ''
+        disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    Label:
+        id: ubicacion_info
+        text: root.ubicacion
+        size_hint: (1,None)
+        height: dp(50)
+        font_size: ((self.width/len(self.text))*2) if self.width and self.text else self.height*0.6
+        text_size: (self.width,None)
+        
+        color: (0,0,0,1)
+        canvas.before:
+            Color:
+                rgba: (1,1,0.9,1)
+            Rectangle:
+                pos: self.pos
+                size:self.size
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(35)
+        Label:
+            text: 'Calificación'
+            font_size: self.height*0.8
+            color: (0,0,0,1)
+        Label:
+            text: f'{root.calificacion}/5'
+            font_size: self.height*0.8
+            size_hint: (None,1)
+            color: (0,0,0,1)
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (None,None)
+        width: self.minimum_width
+        height: dp(50)
+        pos_hint: {'center_x':0.5}
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 1 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 0 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 2 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 1 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 3 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 2 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 4 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 3 else 0)
+        Elemento_Estrella:
+            size_hint: (None, 0.9)
+            width: self.height
+            porcentaje_visible: 1 if root.calificacion >= 5 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 4 else 0)
+    
+    Label:
+        size_hint: (1,None)
+        height: dp(35)
+        text: 'Etiquetas'
+        font_size: self.height*0.8
+        color: 0,0,0,1
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            RoundedRectangle:
+                size: self.size
+                pos:self.pos
+                radius: [dp(5)]
+            Color:
+                rgba:1,1,1,1
+            RoundedRectangle:
+                size: self.size[0]-2,self.size[1]-2
+                pos: self.pos[0]+1,self.pos[1]+1
+    BoxLayout:
+        id: lista_etiquetas
+        orientation: 'vertical'
+        size_hint: (0.8,None)
+        pos_hint: {'center_x':0.5}
+        height: self.minimum_height
+
+
+
+<Interfaz_Imagenes@ButtonBehavior+BoxLayout>:
+    orientation: 'vertical'
+    imagen: ''
+    size_hint_y: None
+    height: self.width/1.618
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        Rectangle: 
+            size: self.size
+            pos: self.pos
+            
+        Color:
+            rgba: 0.8,0.8,0.8,1
+        Rectangle: 
+            size: self.width-2,self.height-2
+            pos: self.x+1,self.y+1
+    Image:
+        source: root.imagen
+        size_hint: (None,None)
+        size: (root.width-2,root.height-2)
+        pos: (root.x+2,root.y+2)
+
+
+
+<Cambia_Interfaz@ButtonBehavior+BoxLayout>:
+    size_hint_y: None
+    height: dp(30)
+    texto: 'sin texto'
+    pos_hint: {'center_x':0.5,'center_y':0.5}
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        Rectangle: 
+            size: self.size
+            pos: self.pos
+            
+        Color:
+            rgba: 0.8,0.8,0.8,1
+        Rectangle: 
+            size: self.width-2,self.height-2
+            pos: self.x+1,self.y+1
+    Label:
+        pos_hint: {'center_x':0.5,'center_y':0.5}
+        text: root.texto
+        font_size: self.height*0.5
+        text_size: (self.width,self.height)
+        color: (0,0,0,1)
+        halign: 'center'
+        valign: 'center'
+        shorten: True
+        shorten_from: 'right'
+        shorten_post: '...'
+    
+<Agregar@ButtonBehavior+BoxLayout>:
+    orientation: 'horizontal'
+    size_hint: (0.7,None)
+    height: dp(60)
+    pos_hint: {'center_x':0.5}
+    canvas.before:
+        Color: 
+            rgba: 0,0,0,1
+        RoundedRectangle: 
+            size:self.size
+            pos: self.pos
+            radius: [dp(5)]
+        Color: 
+            rgba: 1,1,1,1
+        RoundedRectangle: 
+            size:self.width-2,self.height-2
+            pos: self.x+1,self.y+1
+            radius: [dp(5)]
+    Label:
+        text: '+'
+        color:0,0,0,1
+        size_hint_x: 0.3
+        font_size: self.height*0.9
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_x: 0.7
+        Label:
+            text: 'Agregar'
+            color: 0,0,0,1
+            size_hint_y: 0.6
+            font_size: self.height*0.9
+        Label:
+            text: 'nueva imagen'
+            color:0,0,0,1
+            size_hint_y: 0.6
+            font_size: self.height*0.4
+            
+
+
+
+<Layout_InterfazEvento>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+    canvas.before:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle: 
+            size: self.size
+            pos: self.pos
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(50)
+        Button:
+            text: 'Atras'
+            size_hint: (0.2,1)
+            on_release: root.Abrir_MisEventos() if Singleton_Perfil.get_instance().tipo_perfil else Abrir_Login()
+        Label:
+            text: 'Mis Eventos'
+            color:0,0,0,1
+            font_size: self.height*0.4
+            size_hint: (0.8,1)
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(15)
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(30)
+            Cambia_Interfaz:
+                texto:'Imagenes'
+                on_press: root.Cargar_Imagenes()
+            Cambia_Interfaz:
+                texto:'Información'
+                on_press: root.Cargar_Informacion()
+            Cambia_Interfaz:
+                texto:'Estadisticas'
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_y: 1
+            BoxLayout:
+                id: Interfaces_MisEventos
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(5)
+                    
+
+
+
+
+
+
+

@@ -13,4 +13,5 @@ class Singleton_Perfil:
         else:
             self.tipo_perfil = None
             self.token = None
+            self.rut = None
             Singleton_Perfil._instance = self

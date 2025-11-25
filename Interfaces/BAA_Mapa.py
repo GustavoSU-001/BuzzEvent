@@ -61,6 +61,9 @@ class ElementoEstrella(Widget):
         if self.width > 0 and self.height > 0:
             self.t = min(self.width, self.height) * 0.45
             self.r = self.t * 0.4
+    
+    def calificar(self, evento_id, calificacion):
+        pass
 
 class Menu_Evento_Informacion(BoxLayout):
     # Define las propiedades que estás pasando en el constructor:
@@ -134,6 +137,8 @@ class Miniatura_Evento(MapMarkerPopup):
     tiempo = StringProperty("15d")
     action = ObjectProperty(None, allownone=True)
     # Nota: No olvides importar StringProperty y ObjectProperty de kivy.properties
+    
+    marker_source = StringProperty('atlas://map_icons/pin')
 
 class Layout_Mapa(FloatLayout):
     """Widget principal que contiene el MapView y maneja la lógica de ubicación/marcadores."""
@@ -216,9 +221,29 @@ class Layout_Mapa(FloatLayout):
         print("Layout_Mapa inicializado")
         #self.Agregar_Marcador(-36.8336, -73.04898, "Lugarcito", lambda *args: print("Se presionó el marcador"))
 
+    def stop_gps(self):
+        """Detiene la escucha del GPS y cancela el timeout."""
+        
+        # 1. Cancelar Clock de timeout (Esto es seguro en cualquier plataforma)
+        if self._gps_timeout_ev:
+            try: self._gps_timeout_ev.cancel()
+            except Exception: pass
+            self._gps_timeout_ev = None
+            
+        # 2. 💥 CORRECCIÓN CRÍTICA: Solo intentar detener el servicio GPS si estamos en Android 💥
+        if platform == "android":
+            if gps:
+                try: 
+                    gps.stop()
+                    print("Servicio GPS detenido en Android.")
+                except Exception as e: 
+                    # Este catch evitaría errores si hay problemas con la implementación de Plyer
+                    print(f"Error al detener GPS en Android: {e}")
+    
     def Cerrar_Ventana(self):
         """Limpia todos los recursos al salir de la pantalla."""
         print("Cerrando Layout_Mapa...")
+        self.stop_gps()
         self.limpiar_mapa_profundamente()
         
         # El widget debe ser limpiado por el ScreenManager o el contenedor
@@ -228,45 +253,40 @@ class Layout_Mapa(FloatLayout):
     # --- LIMPIEZA PROFUNDA (Consolidado) ---
     def limpiar_mapa_profundamente(self):
         """
-        Limpia completamente el MapView y lo remueve del layout.
+        Limpia completamente el MapView y lo remueve del layout de forma segura.
         """
         map_view = self.get_map_view()
 
-        # 1. Cancelar Clocks (Esto ya lo corregiste)
-        # ...
-        Clock.unschedule(self.limpiar_cache)
-
-
-        # 2. 💥 LIMPIEZA Y REMOCIÓN DEL WIDGET
+        # 1. Cancelar Clocks
+        if self._reloj_inicio:
+            self._reloj_inicio.cancel()
+        if self._reloj_cache:
+            self._reloj_cache.cancel()
+            
+        # 2. LIMPIEZA Y REMOCIÓN DEL WIDGET
         if map_view:
-            # 2a. Limpieza de recursos MapView
-            if hasattr(map_view, 'markers'):
-                for marker in list(map_view.markers):
-                    map_view.remove_marker(marker)
             
-            # --- CORRECCIÓN CRÍTICA ---
-            # Reemplazar map_view.stop_animation() por funciones válidas:
-            
-            # Detiene la descarga de tiles (recomendado al salir)
+            # Detiene la descarga de tiles (CRÍTICO)
             if hasattr(map_view, 'stop_downloading'):
-                    map_view.stop_downloading() 
+                map_view.stop_downloading() 
             
             # Pausa el procesamiento de eventos internos
             map_view._pause = True 
             
-            # 2b. PASO CRÍTICO: Remover la instancia del MapView de su padre
+            # Limpieza de marcadores
+            if hasattr(map_view, 'markers'):
+                for marker in list(map_view.markers):
+                    map_view.remove_marker(marker)
+            
+            # Paso CRÍTICO: Remover la instancia del MapView de su padre
             if map_view.parent:
                 map_view.parent.remove_widget(map_view)
             
             print("MapView retirado del layout.")
 
-        # 3. Limpieza de archivos de caché
-        self.buscar_y_limpiar_cache()
-        print("Limpieza profunda completada.")
-
     # --- MARCADORES ---
 
-    def Agregar_Marcador(self, lat, lon, title="Lugar", callback=None):
+    def Agregar_Marcador(self, lat, lon, title="Lugar", callback=None, source_img=None):
         """Agrega un MapMarker al mapa."""
         map_view = self.get_map_view()
         if not map_view:
@@ -275,7 +295,12 @@ class Layout_Mapa(FloatLayout):
         
         try:
             # Usamos Factory para instanciar la clase definida en KV (Miniatura_Evento)
-            marker = Factory.Miniatura_Evento(lat=lat, lon=lon, title=title)
+            marker = Factory.Miniatura_Evento(
+                lat=lat, 
+                lon=lon, 
+                title=title, 
+                marker_source=source_img if source_img else 'atlas://map_icons/pin'
+            )
             
             if callback:
                 # El callback se asigna al atributo 'action' del marcador si lo tiene
@@ -304,29 +329,34 @@ class Layout_Mapa(FloatLayout):
     # --- GESTIÓN DE CACHÉ ---
     
     def buscar_y_limpiar_cache(self):
-        """Limpia directorios de caché externos (.cache, cache) y limita archivos."""
+        """
+        Limpia de forma segura los archivos de caché de MapView 
+        (solo custom_map_) y limita el número de archivos.
+        """
         try:
-            # Limpiar .cache (completo)
-            dot_cache_dir = Path(os.getcwd()) / '.cache'
-            if dot_cache_dir.exists():
-                shutil.rmtree(dot_cache_dir)
-
-            # Gestionar caché de MapView (solo custom_map_)
+            # NO ELIMINAR EL DIRECTORIO '.cache' de Kivy.
+            # Solo gestionamos la caché de MapView en el directorio 'cache'.
+            
             cache_dir = Path(os.getcwd()) / 'cache'
+            
             if cache_dir.exists():
                 cache_files = []
+                # Solo buscamos archivos de mapa personalizados
                 for file_path in cache_dir.glob('custom_map_*'):
+                    # Guardamos el tiempo de modificación y la ruta
                     cache_files.append((file_path.stat().st_mtime, file_path))
                 
+                # Ordenar de más nuevo a más antiguo
                 cache_files.sort(key=lambda x: x[0], reverse=True)
                 
-                # Eliminar todos excepto los 12 más recientes (ajustado de 4 a 12 para mayor seguridad)
+                # Eliminar todos excepto los 12 más recientes
                 for _, file_path in cache_files[12:]: 
                     try:
                         file_path.unlink() # Eliminar el archivo
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        print(f"Advertencia: No se pudo eliminar caché: {file_path} - {e}")
             return True
+            
         except Exception as e:
             print(f"Error durante la gestión del caché: {e}")
             return False
@@ -334,19 +364,7 @@ class Layout_Mapa(FloatLayout):
     def limpiar_cache(self, dt):
         """Tarea programada para limpiar el caché periódicamente."""
         self.buscar_y_limpiar_cache()
-        map_view = self.get_map_view()
-        
-        if map_view:
-            # Limpiar caché interno del MapView
-            if hasattr(map_view, '_tiles'):
-                map_view._tiles.clear()
-            if hasattr(map_view, 'map_source') and hasattr(map_view.map_source, 'cache'):
-                map_view.map_source.cache = {}
-            
-            # Forzar re-renderizado
-            map_view.zoom = map_view.zoom
-            Window.canvas.ask_update()
-            
+       
     # --- GEOLOCALIZACIÓN ---
     
     def _initialize_location_task(self, dt):
@@ -363,12 +381,16 @@ class Layout_Mapa(FloatLayout):
                 pass
         
     def get_location_once(self, timeout=15):
-        """Decide si usar GPS (Android) o IP (PC)."""
+        """Decide si usar GPS (Android) o IP (PC). Ahora inicia escucha continua en Android."""
         if platform == "android" and gps:
             self.request_android_permissions()
             try:
+                # 💥 Iniciamos la escucha continua 💥
                 gps.configure(on_location=self._on_location, on_status=self._on_status)
-                gps.start(minTime=1000, minDistance=0)
+                # minTime > 1000ms o minDistance > 0m asegura actualizaciones más frecuentes
+                gps.start(minTime=1000, minDistance=5) 
+                
+                # Mantenemos el timeout por si nunca logra encontrar una ubicación inicial
                 self._gps_timeout_ev = Clock.schedule_once(self._on_gps_timeout, timeout)
             except NotImplementedError:
                 self._get_location_by_ip()
@@ -419,42 +441,58 @@ class Layout_Mapa(FloatLayout):
     def _on_location(self, **kwargs):
         """Actualiza la UI con la nueva ubicación (GPS o IP)."""
         
-        # 1. Cancelar GPS Timeout y Detener GPS
+        # 1. Cancelar GPS Timeout si la ubicación es válida (¡Esto es vital!)
         if self._gps_timeout_ev:
             try: self._gps_timeout_ev.cancel()
             except Exception: pass
 
-        if gps:
-            try: gps.stop()
-            except Exception: pass
+        # ** NO LLAMAR gps.stop() AQUÍ **
             
         try:
-            # 2. Obtener Coordenadas y asegurar que sean float
             lat = float(kwargs.get('lat', self.LAT_DEFAULT))
             lon = float(kwargs.get('lon', self.LON_DEFAULT))
             
-            # 3. Solo actualiza si los valores son válidos
             if lat and lon:
-                # 4. Establecer las propiedades de la clase (Latitud/Longitud)
                 self.latitud = lat
                 self.longitud = lon
-                self.zoom = 15
+                self.zoom = 15 # Puedes mantener un zoom constante
                 self.ubicacion_actualizada = True
                 
-                # 5. 💥 PASO CLAVE: LLAMAR A LA FUNCIÓN DE ACTUALIZACIÓN
-                #    Usamos 'lat' y 'lon' (las coordenadas locales)
-                self.on_location_updated(lat, lon) 
+                # 💥 PASO CRÍTICO: Mover el mapa y el marcador 💥
+                self.mover_marcador_usuario(lat, lon) 
                 
-                # 6. Mensajes de consola
-                if 'city' in kwargs and kwargs['city']:
-                    print(f"Ubicación por IP: {kwargs['city']}, {kwargs.get('country')}")
-                else:
-                    print(f"Ubicación actualizada: {lat}, {lon}")
-                    
-        except ValueError:
-            print("Advertencia: Coordenadas no válidas.")
+                print(f"Ubicación actualizada: {lat}, {lon}")
+                                
         except Exception as e:
             print(f"Error en _on_location: {e}")
+
+    def mover_marcador_usuario(self, lat, lon):
+        """Mueve el marcador de usuario y centra el mapa en él."""
+        map_view = self.get_map_view()
+        
+        if map_view:
+            # Si el marcador ya existe, simplemente actualiza su posición
+            if self.marker:
+                self.marker.lat = lat
+                self.marker.lon = lon
+            else:
+                # Si es la primera vez (por el timeout o el inicio), créalo.
+                # Asegúrate de usar la imagen del círculo aquí también
+                self.marker = self.Agregar_Marcador(
+                    lat=lat, 
+                    lon=lon, 
+                    title="Ubicación Actual",
+                    callback=lambda *args: print("Usuario presionado"),
+                    source_img='Static\\Imagenes\\circulo_usuario.png' 
+                )
+            
+            # Opcional: Centrar el mapa en la nueva ubicación
+            map_view.center_on(lat, lon)
+        else:
+            # Si el mapa aún no está cargado, simplemente actualiza las propiedades
+            self.latitud = lat
+            self.longitud = lon
+
 
     def _on_status(self, stype, status):
         """Maneja el estado del GPS (opcional)."""
@@ -516,28 +554,17 @@ class Layout_Mapa(FloatLayout):
         map_view = self.get_map_view()
         
         if map_view:
-            # 1. Mover el mapa
+            # 1. Mover el mapa al centro inicial (IP o DEFAULT)
             map_view.center_on(self.latitud, self.longitud)
             map_view.zoom = self.zoom
+            
             print(f"Mapa MOVIDO a Lat: {self.latitud}, Lon: {self.longitud}")
             
-            # 2. 💥 CREAR/ACTUALIZAR MARCADOR DE UBICACIÓN ACTUAL
-            # Si ya existe un marcador para la ubicación actual (self.marker), lo eliminamos
-            if self.marker:
-                self.Eliminar_marcador(self.marker) # Usamos tu función de eliminación
-            
-            # Creamos y guardamos el nuevo marcador usando la función que ya usa Miniatura_Evento
-            # Asignamos el resultado a self.marker (la propiedad de la clase)
-            
-            self.marker = self.Agregar_Marcador(
-                lat=self.latitud, 
-                lon=self.longitud, 
-                title="Ubicación Actual",
-                callback=lambda *args: print("Marcador de ubicación actual presionado")
-            )
+            # 2. 💥 ELIMINAR O COMENTAR LA CREACIÓN DEL MARCADOR 💥
+            # La función mover_marcador_usuario se encarga de esto en el callback
             
         else:
-            print("No se pudo mover el mapa: MapView no encontrado.")   
+            print("No se pudo mover el mapa: MapView no encontrado.")
         
         
         

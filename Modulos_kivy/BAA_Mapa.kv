@@ -73,11 +73,12 @@
         size_hint: (None,None)
         size: root.size[0]-2,root.size[1]-2
 
-<Elemento_Estrella@Widget>:
+<Elemento_Estrella@ButtonBehavior+Widget>:
     radio: 50.0 
     porcentaje_visible:0
     on_size: 
         self.radio = min(self.width, self.height) * 0.45
+    
 
     canvas.before:
         Color:
