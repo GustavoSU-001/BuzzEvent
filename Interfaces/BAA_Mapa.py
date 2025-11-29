@@ -138,6 +138,15 @@ class Menu_Evento_Base(ModalView):
         
         # 5. Mostrar en pantalla
         self.ids.caja_contenido.add_widget(interfaz)
+    
+    #Interfaz que esta dentro de evento SHOP
+    def Cargar_Interfaz_ListaCompras(self):
+        self.ids.listado_menu_evento.clear_widgets()
+        Shop=Factory.Menu_Evento_ListaCompra()
+        self.ids.listado_menu_evento.add_widget(Shop)
+    
+    
+
 
 class Menu_Evento_Sushi(Menu_Evento_Base): # se agregan los contenido que iran en el evento correspondiente SUSHI
     def __init__(self, **kwargs):
@@ -162,7 +171,7 @@ class Menu_Evento_Feria(Menu_Evento_Base):   # Este es lo mismo que arriba , per
         self.ubicacion ='Calle Rosa #452'
         self.calificacion = 3.5
         self.etiquetas = ["#Moderno","#Calidad"]
-
+        
 class Menu_Evento_Rock(Menu_Evento_Base):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -210,6 +219,12 @@ class Menu_Evento_Informacion(BoxLayout):
     ubicacion = StringProperty("")
     calificacion = NumericProperty(0)
     titulo = StringProperty("")
+
+
+
+
+
+    
 #########################################################################################################
 
 

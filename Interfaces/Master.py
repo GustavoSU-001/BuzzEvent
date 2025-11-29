@@ -136,7 +136,8 @@ class BAC_Screen(Screen):
 class BAD_Screen(Screen):
     def __init__(self, **kwargs):
         super(BAD_Screen,self).__init__(**kwargs)
-        self.layout= Layout_Suscripciones(self.abrir_otra_pantalla)
+        self.layout= Layout_Suscripciones(self.abrir_otra_pantalla) ## para 
+        
         self.add_widget(self.layout)
 
     def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):

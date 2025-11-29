@@ -243,7 +243,7 @@
     pos_hint: {'center_x':0.5}
     size_hint: (1,1)
     Button:
-        text: 'Comprar Entradas'
+        text: 'Comprar Entradas'  # botones de la parte de SHOP
         size_hint: (1,None)
         height: dp(35)
         color: (0,0,0,1)
@@ -844,6 +844,7 @@
                     # Lógica Shop
                     root.Cargar_Interfaz_ListaCompras() if root.pestana != 'shop' else root.Cargar_Interfaz_Imagenes()
                     root.pestana="shop" if root.pestana != 'shop' else 'imagen'
+
             Button:
                 text: 'Alert'
                 background_color: (0.1,0.1,0,1)

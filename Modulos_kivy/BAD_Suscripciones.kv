@@ -1,3 +1,4 @@
+#:kivy 2.1.0
 #:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
 
 <Elemento_Suscripcion@BoxLayout>:
@@ -6,6 +7,7 @@
     padding: [dp(10)]
     valor: "$20.000"
     spacing: dp(12)
+    
     
     canvas.before:
         Color:
@@ -170,7 +172,7 @@
         height: dp(35)
         
         
-<Boton_Elemento@ButtonBehavior+BoxLayout+Label>:
+<Boton_Elemento>:
     size_hint: (0.8,None)
     text: 'Comprar Suscripción'
     color: (1,1,1,1)
@@ -178,6 +180,7 @@
     font_size: self.height*0.6
     text_size: (self.width,None)
     halign: 'center'
+    on_release:root.mostrar_mensaje_exito()
     canvas.before:
         Color:
             rgba: 0,0,0,1 
@@ -187,6 +190,8 @@
             radius: [self.size[1]*0.2]
         Color:
             rgba: root.bg_color
+            rgba: 
+                (root.bg_color[0]*0.7, root.bg_color[1]*0.7, root.bg_color[2]*0.7, 1) if self.state == 'down' else root.bg_color
         RoundedRectangle:
             size: self.size[0]-2,self.size[1]-2
             pos: self.pos[0]+1,self.pos[1]+1
@@ -232,6 +237,7 @@
             text: 'Atras'
             size_hint: (0.2,1)
             on_release: root.Regresar_MenuPrincipal(Singleton_Perfil.get_instance().tipo_perfil) if Singleton_Perfil.get_instance().tipo_perfil else Abrir_Login()
+            
         Label:
             text: 'Panel de Suscripciones'
             color:0,0,0,1
@@ -254,6 +260,7 @@
             scroll_y: 1
             size_hint: (1,1)
             BoxLayout:
+                id:contenedor_suscripciones
                 orientation: 'vertical'
                 size_hint: (1,None)
                 pos_hint: {'top':1}
