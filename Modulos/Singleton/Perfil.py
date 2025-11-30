@@ -15,3 +15,8 @@ class Singleton_Perfil:
             self.token = None
             self.rut = None
             Singleton_Perfil._instance = self
+            # --- AGREGA ESTO ---
+            self.nombre = ""    # Inicializamos vacío o como None
+            self.apellido = ""  # Inicializamos vacío o como None
+            
+            Singleton_Perfil._instance = self

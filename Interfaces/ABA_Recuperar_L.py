@@ -19,7 +19,6 @@ from firebase_admin import credentials, firestore
 # SECCIÓN 1: CONFIGURACIÓN
 # ==========================================
 
-# Conexion a la base de datos
 NOMBRE_ARCHIVO_JSON = "eva3-72fb2-firebase-adminsdk-hbxid-828018cca2.json" 
 
 def encontrar_archivo_json(nombre_archivo):
@@ -63,6 +62,25 @@ else:
 codigo_secreto_generado = None
 rut_usuario_encontrado = None 
 
+# --- VALIDACIÓN DE FORMATO ---
+def validar_formato_contrasena(password):
+    """
+    Valida: 8 caracteres, mayúscula, minúscula, número y símbolo.
+    """
+    if len(password) < 8:
+        return False, "Mínimo 8 caracteres."
+    if not any(c.isupper() for c in password):
+        return False, "Falta una Mayúscula."
+    if not any(c.islower() for c in password):
+        return False, "Falta una Minúscula."
+    if not any(c.isdigit() for c in password):
+        return False, "Falta un Número."
+    if all(c.isalnum() for c in password):
+        return False, "Falta un símbolo (.,-_@)."
+        
+    return True, "Formato Válido"
+# -----------------------------
+
 def enviar_codigo_verificacion(destinatario, es_correo=True):
     global codigo_secreto_generado
     codigo_secreto_generado = str(random.randint(100000, 999999))
@@ -70,10 +88,10 @@ def enviar_codigo_verificacion(destinatario, es_correo=True):
     if es_correo:
         # --- CONFIGURA TU GMAIL AQUÍ ---
         sender_email = "guille18.xd@gmail.com"  # <--- CAMBIAR
-        sender_password = "dywc toiz dycb ougb"  # <--- CAMBIAR (Clave de 16 digitos)
+        sender_password = "dywc toiz dycb ougb"  # <--- CAMBIAR
         
         if sender_email == "tucorreo@gmail.com":
-            print("\n!!! ERROR: Configura el sender_email en el código !!!\n")
+            print("\n!!! ERROR: Configura el sender_email en RecuperarPassword.py !!!\n")
             return False
 
         msg = MIMEMultipart()
@@ -89,9 +107,6 @@ def enviar_codigo_verificacion(destinatario, es_correo=True):
             server.sendmail(sender_email, destinatario, msg.as_string())
             server.quit()
             return True
-        except smtplib.SMTPAuthenticationError:
-            print("ERROR 535: Revisa tu Contraseña de Aplicación.")
-            return False
         except Exception as e:
             print(f"Error SMTP: {e}")
             return False
@@ -111,7 +126,6 @@ def buscar_usuario_especifico(dato_ingresado):
         doc = doc_ref.get()
         
         if not doc.exists: return False
-
         data = doc.to_dict()
         if not data: return False
         
@@ -123,11 +137,11 @@ def buscar_usuario_especifico(dato_ingresado):
             
             if es_correo and user_data.get('correo') == dato_limpio:
                 rut_usuario_encontrado = rut_key 
-                print(f"¡ENCONTRADO! RUT: {rut_key}") # arrojar un print para ver si detecto el rut que esta afiliado a ese correo
+                print(f"¡ENCONTRADO! RUT: {rut_key}")
                 return True
             
             if not es_correo:
-                tel_bd = user_data.get('telefono')  # los mismo pero con la parte del telefono
+                tel_bd = user_data.get('telefono')
                 if str(tel_bd) == dato_limpio:
                      rut_usuario_encontrado = rut_key
                      return True
@@ -151,12 +165,8 @@ def actualizar_contrasena_firestore(nueva_contra):
         
         print(f"DEBUG: Actualizando contraseña para el RUT '{rut_usuario_encontrado}'...")
         
-        # --- SOLUCIÓN ROBUSTA PARA RUTS CON PUNTOS ---
-        # En lugar de usar FieldPath (que da errores en tu versión),
-        # usamos un diccionario estructurado y merge=True.
-        # Esto le dice a Firebase: "Toma este RUT, entra a 'contrasena' y actualízala,
-        # pero NO borres el resto de los datos (merge)".
-        
+        # Usamos set con merge=True.
+        # Esto funciona igual que update pero evita problemas con puntos en el RUT.
         datos_actualizar = {
             rut_usuario_encontrado: {
                 'contrasena': nueva_contra
@@ -164,7 +174,6 @@ def actualizar_contrasena_firestore(nueva_contra):
         }
         
         doc_ref.set(datos_actualizar, merge=True)
-        
         print("DEBUG: Actualización exitosa.")
         return True
     except Exception as e:
@@ -182,6 +191,7 @@ class Layout_Recuperar_L(BoxLayout):
         self.Ingresar_Correo_o_Telefono()
 
     def _obtener_texto_seguro(self, widget):
+        """Busca el texto real dentro del widget personalizado."""
         if hasattr(widget, 'text') and widget.text: return widget.text
         if hasattr(widget, 'texto') and widget.texto: return widget.texto
         try:
@@ -191,6 +201,7 @@ class Layout_Recuperar_L(BoxLayout):
         return ""
 
     def _limpiar_texto_seguro(self, widget):
+        """Limpia el texto del widget personalizado."""
         try: widget.text = ""
         except: pass
         try: widget.texto = ""
@@ -201,18 +212,24 @@ class Layout_Recuperar_L(BoxLayout):
         except: pass
 
     def Ingresar_Correo_o_Telefono(self, dt=None):
+        # 1. ESTADO VISUAL INICIAL
         self.ids.img_recuperar.size_hint_y = 0
         self.ids.img_recuperar.opacity = 0
         self.ids.lbl_recuperar.size_hint_y = 1
         self.ids.lbl_recuperar.text = "Ingrese su Correo Electrónico."
 
+        # 2. RESETEAR INPUTS
         self.ids.inp_recuperar_p.t_text = 'Correo Electrónico'
         self._limpiar_texto_seguro(self.ids.inp_recuperar_p)
-        
         self.ids.inp_recuperar_p.opacity = 1
         self.ids.inp_recuperar_p.disabled = False
-        #self.ids.box_btn_recuperar.size_hint_y = 0.5
         
+        self.ids.inp_recuperar_s.t_text = ''
+        self._limpiar_texto_seguro(self.ids.inp_recuperar_s)
+        self.ids.inp_recuperar_s.opacity = 0
+        self.ids.inp_recuperar_s.disabled = True
+        
+        # 3. RESETEAR BOTÓN
         self.ids.btn_recuperar.text = 'Siguiente'
         self.ids.btn_recuperar.accion = self.Procesar_Usuario_BD
         
@@ -228,7 +245,7 @@ class Layout_Recuperar_L(BoxLayout):
         if buscar_usuario_especifico(dato):
             es_email = "@" in dato
             if enviar_codigo_verificacion(dato, es_email):
-                msg = f"Enviado a {dato}. Revise su correo electronico" if es_email else "SMS enviado"
+                msg = f"Enviado a {dato}. REVISE SPAM" if es_email else "SMS enviado"
                 self.ids.lbl_recuperar.text = msg
                 self.Ir_A_Verificar_Codigo()
             else:
@@ -267,30 +284,40 @@ class Layout_Recuperar_L(BoxLayout):
         p1 = self._obtener_texto_seguro(self.ids.inp_recuperar_p)
         p2 = self._obtener_texto_seguro(self.ids.inp_recuperar_s)
         
-        if p1 == p2 and len(p1) > 0:
-            if actualizar_contrasena_firestore(p1):
-                self.Resultado_Exitoso()
-            else:
-                self.ids.lbl_recuperar.text = "Error al guardar."
+        if p1 != p2:
+             self.ids.lbl_recuperar.text = "Las contraseñas no coinciden."
+             return
+
+        es_valida, mensaje_error = validar_formato_contrasena(p1)
+        if not es_valida:
+            self.ids.lbl_recuperar.text = mensaje_error
+            return
+        
+        if actualizar_contrasena_firestore(p1):
+            self.Resultado_Exitoso()
         else:
-            self.ids.lbl_recuperar.text = "Las contraseñas no coinciden."
+            self.ids.lbl_recuperar.text = "Error al guardar."
             
     def Resultado_Exitoso(self):
         self.ids.img_recuperar.size_hint_y = 0.5
         self.ids.img_recuperar.opacity = 1
         self.ids.lbl_recuperar.size_hint_y = 0.2
-        self.ids.lbl_recuperar.text = "¡Éxito! Su Contraseña a sido cambiada."
+        self.ids.lbl_recuperar.text = "¡Éxito! Volviendo al Login..."
         
         self.ids.inp_recuperar_p.opacity = 0; self.ids.inp_recuperar_p.disabled = True
         self.ids.inp_recuperar_s.opacity = 0; self.ids.inp_recuperar_s.disabled = True
-        self.ids.box_btn_recuperar.size_hint_y = 0.2
+        
         self.ids.btn_recuperar.accion = self.Volver_Login
         self.ids.btn_recuperar.text = 'Login'
 
     def Volver_Login(self):
         self.abrir_otra_pantalla('AA_Login', transition=SlideTransition(direction="right"))
-        Clock.schedule_once(lambda dt: self.Ingresar_Correo_o_Telefono(), 1)
+        Clock.schedule_once(lambda dt: self.Ingresar_Correo_o_Telefono(), 0.1)
 
     def Regresar_Login(self):
+        # 1. Cambia la pantalla hacia la derecha
         self.abrir_otra_pantalla("AA_Login", SlideTransition(direction="right"))
+        
+        # 2. Resetea todo el formulario para la próxima vez
+        # Usamos schedule_once para que no se vea el cambio brusco antes de la animación
         Clock.schedule_once(lambda dt: self.Ingresar_Correo_o_Telefono(), 0.5)

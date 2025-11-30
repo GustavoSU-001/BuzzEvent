@@ -88,7 +88,7 @@ class Lectura_Eventos_DB:
                     if fecha_inicio > f:
                         continue
                 if fecha_fin:
-                    if decha_fin <f:
+                    if fecha_fin <f:
                         continue
                 query = self.db.collection("Sector")
                 query2=query.document(self.sector)
@@ -162,7 +162,7 @@ class Lectura_Eventos_DB:
         llaves = list(eventos.keys())
         if fecha_inicio:
             for l in llaves:
-                e = evento[l]
+                e = eventos[l]
                 if e['Fechas']['Fecha_Inicio'] >= fecha_inicio:
                     eventos_filtrados1[l]=e
             eventos = eventos_filtrados1
@@ -170,7 +170,7 @@ class Lectura_Eventos_DB:
         
         if fecha_fin:
             for l in llaves:
-                e = evento[l]
+                e = eventos[l]
                 if e['Fechas']['Fecha_Termino'] <= fecha_fin:
                     eventos_filtrados2[l]=e
             eventos = eventos_filtrados2
@@ -180,15 +180,19 @@ class Lectura_Eventos_DB:
             e=eventos[l]
             cantidad_v = len(e['Asistencia'])
             cal=[ev['Calificacion'] for ev in e['Asistencia']]
-            calificacion_t = round((sum(cal)/cantidad_v),2)
+            if cantidad_v > 0:
+                calificacion_t = round((sum(cal)/cantidad_v),2)
+            else:
+                calificacion_t = 0.0
+            #calificacion_t = round((sum(cal)/cantidad_v),2)
             imagenes = [i['Direccion'] for i in e['Archivos'] if i['Tipo'] == 'Imagen']
             bloque = {
                 'Titulo': e['Titulo'],
                 'Descripcion': e['Descripcion'],
                 'Calificacion':calificacion_t,
                 'Imagenes': imagenes,
-                'Ubicacion': e['Ubicacion']['Direccion'],
-                'Etiquetas': e['Etiquetas'],
+                'Ubicacion': e.get('Ubicacion', {}).get('Direccion', 'Sin Dirección'),
+                'Etiquetas': e.get('Etiquetas', []),
                 'Estado': e['Estado'],
                 'Fecha_Inicio': e['Fechas']['Fecha_Inicio'],
                 'Fecha_Termino': e['Fechas']['Fecha_Termino']

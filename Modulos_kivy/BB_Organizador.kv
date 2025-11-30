@@ -1,14 +1,5 @@
+#:kivy 2.1.0
 #: import Factory kivy.factory.Factory
-
-
-
-
-
-
-
-
-
-
 
 <Layout_Organizador>:
     orientation: 'vertical'
@@ -21,10 +12,12 @@
             size: self.size
             pos: self.pos
     Boton_Cuenta:
+        id: btn_cuenta_usuario
         size_hint: (1,0.2)
         perfil: "Organizador"
-        nombre: "Nombresote"
-        apellido: "apellinator"
+        nombre: "Nombre"
+        apellido: "Apellido"
+        #on_release:root.abrir_menu_cuenta()
         
         
             

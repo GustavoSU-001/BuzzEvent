@@ -70,17 +70,7 @@ def validar_rut(rut_completo):
 
 #################################################################################
 
-# def _formatear_datos_firestore(datos):
-#         datos_formateados = {}
-#         for clave, valor in datos.items():
-#             if isinstance(valor, str):
-#                 datos_formateados[clave] = {'stringValue': valor}
-#             elif isinstance(valor, int):
-#                 datos_formateados[clave] = {'integerValue': str(valor)}
-#             # Agrega más tipos según sea necesario (boolean, double, etc.)
-#             else:
-#                 raise ValueError(f"Tipo de dato no soportado para la clave '{clave}': {type(valor)}")
-#         return {'fields': datos_formateados}
+
 def _formatear_datos_firestore(datos):
     datos_formateados = {}
     for clave, valor in datos.items():
@@ -198,12 +188,21 @@ class Layout_Registrar_L(BoxLayout):
             # --- AÑADE ESTA VINCULACIÓN PARA LA CONTRASEÑA ---
             contrasena_widget = self.ids.contrasena_input.ids.usuario
             contrasena_widget.bind(focus=self.validar_fuerza_contrasena)
+            contrasena_widget.bind(text=self.limitar_caracteres_password)
             # --------------------------------------------------
 
         except AttributeError as e:
             print(f"Error al enlazar el RUT: {e}. Asegúrate de que el ID en el .kv coincida.")
 
         ################################################################################
+    
+    def limitar_caracteres_password(self, widget_input, texto_nuevo):
+            """Impide escribir más de 16 caracteres."""
+            if len(texto_nuevo) > 16:
+                widget_input.text = texto_nuevo[:16]
+
+#################################################################
+
     # --- FILTRO Para digitos en la edad ---
 
     def filtro_solo_digitos(self, substring, from_undo):
@@ -397,7 +396,7 @@ class Layout_Registrar_L(BoxLayout):
             if not self.ids.terminos_y_condiciones.ids.checkbox_Registrar_L.active:
                 popup=Popup(
                     title="Términos y Condiciones", #titulo del popup
-                    content=Label(text="Debe aceptar los términos y condiciones para registrarse."),# Lo que contiene
+                    content=Label(text=f"Debe aceptar los términos y condiciones para registrarse."),# Lo que contiene
                     size_hint=(None, None), size=(400, 200) #tamaño del popup
                 )
                 popup.open()
@@ -674,8 +673,8 @@ class Layout_Registrar_L(BoxLayout):
     def validar_fuerza_contrasena(self, text_input_widget, is_focused):
         """
         Valida la seguridad de la contraseña al salir del campo.
-        Reglas:
-        1. Mínimo 8 caracteres.
+        Reglas minimas que tiene que cumplir:
+        1. Mínimo 8 caracteres y Maximo 16 caracteres.
         2. Al menos una mayúscula.
         3. Al menos una minúscula.
         4. Al menos un número.
@@ -702,6 +701,7 @@ class Layout_Registrar_L(BoxLayout):
 
         # --- Lógica de Validación ---
         min_longitud = 8
+        max_longitud = 16
         tiene_numero = any(c.isdigit() for c in password)
         tiene_mayuscula = any(c.isupper() for c in password)
         tiene_minuscula = any(c.islower() for c in password)
@@ -709,7 +709,8 @@ class Layout_Registrar_L(BoxLayout):
         
         # Comprobamos todas las reglas
         es_valida = (
-            len(password) >= min_longitud and
+            len(password) >= min_longitud and 
+            len(password) <= max_longitud and
             tiene_numero and
             tiene_mayuscula and
             tiene_minuscula and
