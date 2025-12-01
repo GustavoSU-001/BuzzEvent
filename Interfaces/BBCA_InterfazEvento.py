@@ -182,7 +182,7 @@ class Layout_InterfazEvento(BoxLayout):
         ag=Factory.Interfaz_Informacion()
         ag.ids.titulo_info.text=info[self.id_evento]['Titulo']
         ag.ids.descripcion_info.text=info[self.id_evento]['Descripcion']
-        ag.ids.ubicacion_info.text=info[self.id_evento]['Ubicacion']
+        ag.ids.ubicacion_info.text=info[self.id_evento]['Ubicacion']['Direccion']
         ag.calificacion = info[self.id_evento]['Calificacion']
         self.ids.Interfaces_MisEventos.add_widget(ag)
         
