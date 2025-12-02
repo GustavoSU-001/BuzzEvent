@@ -3,6 +3,9 @@ from Modulos.Singleton.Perfil import Singleton_Perfil
 from kivy.uix.screenmanager import SlideTransition
 
 import matplotlib.pyplot as plt
+
+# Para el Treemap
+import squarify # <--- ¡Nueva Importación!
 import numpy as np
 from kivy_garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
@@ -51,7 +54,9 @@ class Layout_Estadisticas(BoxLayout):
             # === NUEVOS DATOS DE LÍNEA ===
             {'tipo': 'Linea', 'titulo':"Gráfico de Línea: Venta Mensual", 'datos': [50, 75, 60, 90, 80], 'etiquetas': ['Ene', 'Feb', 'Mar', 'Abr', 'May']},
             # ==============================
-            
+            # === NUEVOS DATOS DE MOSAICO (TREEMAP) ===
+            {'tipo': 'Mosaico', 'titulo':"Gráfico de Mosaico: Distribución por Región", 'datos': [500, 350, 200, 100], 'etiquetas': ['Norte (500)', 'Centro (350)', 'Sur (200)', 'Este (100)']},
+            # ==============================
             {'tipo': 'Pastel', 'titulo':"Gráfico de Pastel: Distribución", 'datos': [25, 25, 25, 25], 'etiquetas': ['W', 'X', 'Y', 'Z']},
         ]
         
@@ -91,7 +96,68 @@ class Layout_Estadisticas(BoxLayout):
                     valores=grafico['datos']
                 )
                 self.ids.Lista_Estadisticas.add_widget(pastel)
+
+            # === NUEVA LÓGICA PARA GRÁFICO DE MOSAICO ===
+            elif grafico['tipo'] == 'Mosaico':
+                mosaico = GraficoMosaico(**layout_props)
+                mosaico.crear_grafico(
+                    titulo=grafico['titulo'],
+                    etiquetas=grafico['etiquetas'],
+                    valores=grafico['datos']
+                )
+                self.ids.Lista_Estadisticas.add_widget(mosaico)
+
+
+
+class GraficoMosaico(BoxLayout):
+    """
+    Un widget de BoxLayout que contiene y genera un Gráfico de Mosaico (Treemap)
+    utilizando Matplotlib y Squarify.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print("Creando gráfico de mosaico...")
+
+    def crear_grafico(self, titulo='Sin Título', etiquetas=['A'], valores=[10]):
+        # 1. Preparar los datos
+        sizes = valores
+        labels = etiquetas
         
+        # 2. Crear la figura y los ejes de Matplotlib
+        w = 4
+        h = w / 1.618
+        fig, ax = plt.subplots(figsize=(w, h))
+
+        # 3. Crear el Treemap (Gráfico de Mosaico)
+        # Es bueno usar un esquema de color para que los bloques sean visualmente distintos
+        cmap = plt.cm.Blues
+        mini = min(sizes)
+        maxi = max(sizes)
+        norm = plt.Normalize(vmin=mini * 0.8, vmax=maxi * 1.2)
+        
+        # Generar los colores
+        colors = [cmap(norm(value)) for value in sizes]
+
+        # Mapear las áreas con squarify
+        squarify.plot(
+            sizes=sizes,
+            label=labels,
+            color=colors,
+            alpha=0.8,
+            pad=True, # Añade un poco de relleno entre las celdas
+            ax=ax
+        )
+        
+        # 4. Configurar título y quitar ejes (los treemaps no los usan)
+        ax.set_title(titulo, fontsize=14)
+        ax.axis('off') # Desactiva el eje X y Y para limpiar el gráfico
+
+        # 5. Integrar la figura de Matplotlib como un widget de Kivy
+        chart_widget = FigureCanvasKivyAgg(fig)
+
+        # 6. Añadir el widget del gráfico a esta instancia de BoxLayout
+        self.add_widget(chart_widget)
+
         
         
 class GraficoBarra(BoxLayout):

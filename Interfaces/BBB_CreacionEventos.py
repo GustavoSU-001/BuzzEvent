@@ -671,6 +671,9 @@ class Layout_CreacionEventos(BoxLayout):
         #self.Desplegar_Visibilidad()
         
     def Abrir_MenuPrincipal(self):
+        # Limpiar formulario antes de salir
+        self.Limpiar_Campos()
+        
         rol = Singleton_Perfil.get_instance().tipo_perfil
         if rol == 'Estandar':
             self.abrir_otra_pantalla("BA_Estandar", transition=SlideTransition(direction="right"))
@@ -684,6 +687,81 @@ class Layout_CreacionEventos(BoxLayout):
     
     def Abrir_Login(self):
         self.abrir_otra_pantalla("AA_Login", transition= SlideTransition(direction="right"))
+    
+    def Limpiar_Campos(self):
+        """
+        Limpia todos los campos del formulario de creación de eventos.
+        """
+        print("🧹 Iniciando limpieza de campos...")
+        
+        # 1. Limpiar campos de texto básicos
+        # Usamos try-except para evitar que un error detenga toda la limpieza
+        try:
+            self.ids.NombreEvento.ids.usuario.text = ''
+            self.ids.Descripcion.ids.usuario.text = ''
+            self.ids.Ubicacion.ids.usuario.text = ''
+            self.ids.Latitud.ids.usuario.text = ''
+            self.ids.Longitud.ids.usuario.text = ''
+        except Exception as e:
+            print(f"⚠️ Error limpiando campos de texto: {e}")
+
+        # 2. Limpiar fechas y horas
+        try:
+            self.ids.FechaInicio.ids.usuario.text = ''
+            self.ids.HoraInicio.ids.usuario.text = ''
+            self.ids.FechaFin.ids.usuario.text = ''
+            self.ids.HoraFin.ids.usuario.text = ''
+        except Exception as e:
+            print(f"⚠️ Error limpiando fechas/horas: {e}")
+        
+        # 3. Resetear spinners
+        try:
+            self.ids.acceso_spinner.text = 'Tipo de Acceso'
+            self.ids.visibilidad_spinner.text = 'Tipo Evento'
+        except Exception as e:
+            print(f"⚠️ Error reseteando spinners: {e}")
+        
+        # 4. Limpiar campos de dinero
+        try:
+            self.ids.entrada_precio.ids.dinero.text = ''
+            self.ids.preinscripcion_precio.ids.dinero.text = ''
+        except Exception as e:
+            print(f"⚠️ Error limpiando precios: {e}")
+        
+        # 5. Limpiar etiquetas (Lógica corregida)
+        try:
+            lista_etiquetas = self.ids.get('Lista_Etiquetas')
+            if lista_etiquetas and hasattr(lista_etiquetas, 'ids') and 'Elementos' in lista_etiquetas.ids:
+                contenedor_elementos = lista_etiquetas.ids.Elementos
+                for child in contenedor_elementos.children:
+                    if hasattr(child, 'ids') and 'seleccion' in child.ids:
+                        child.ids.seleccion.active = False
+        except Exception as e:
+            print(f"⚠️ Error limpiando etiquetas: {e}")
+        
+        # 6. Eliminar tabla de invitados
+        try:
+            contenedor = self.ids.get('contenedor')
+            if contenedor:
+                # Buscar widget con id 'tabla_invitados'
+                tabla_a_eliminar = None
+                # Iteramos sobre una copia de la lista para poder modificarla
+                for widget in contenedor.children[:]:
+                    if hasattr(widget, 'id') and widget.id == 'tabla_invitados':
+                        tabla_a_eliminar = widget
+                        break
+                
+                if tabla_a_eliminar:
+                    contenedor.remove_widget(tabla_a_eliminar)
+                    print("✅ Tabla de invitados eliminada")
+                    
+                    # Limpiar referencia si existe
+                    if hasattr(self, 'tabla_invitados_widget'):
+                        self.tabla_invitados_widget = None
+        except Exception as e:
+            print(f"⚠️ Error eliminando tabla de invitados: {e}")
+            
+        print("✅ Formulario limpiado completamente")
         
     
     def Eliminar_TablaInvitados(self, widget, *args):
@@ -836,24 +914,9 @@ class Layout_CreacionEventos(BoxLayout):
         for etiqueta_widget in self.ids.Lista_Etiquetas.ids.Elementos.children[::-1]:
             # 'etiqueta_widget' es Etiquetas_Elementos
             
-            # Debes asegurarte de que el widget que contiene 'seleccion' y 'text'
-            # sea el que estás referenciando.
-            # Asumo que 'seleccion' es el checkbox hijo de 'etiqueta_widget'
-            # y que el texto está en 'etiqueta_widget.text' o un hijo directo.
-            
             # Si 'seleccion' está directamente dentro de etiqueta_widget (como ID):
             if hasattr(etiqueta_widget.ids, 'seleccion') and etiqueta_widget.ids.seleccion.active:
                 # Si el texto está directamente en el widget:
-                if hasattr(etiqueta_widget, 'text'):
-                    Etiquetas.append(etiqueta_widget.text)
-                # Si el texto es una propiedad de Kivy, usar su ID, ej:
-                # Etiquetas.append(etiqueta_widget.ids.texto_etiqueta.text)
-                
-                # **NOTA**: Si tu estructura KV es como la que mostraste,
-                # Etiquetas_Elementos es el widget y deberías poder acceder 
-                # a su texto. Si el texto está en un widget hijo, ajusta.
-                
-                # Dado que el ejemplo KV solo muestra id y text en Etiquetas_Elementos:
                 if hasattr(etiqueta_widget, 'text'):
                     Etiquetas.append(etiqueta_widget.text)
         # -------------------------------------------------------------
@@ -865,13 +928,21 @@ class Layout_CreacionEventos(BoxLayout):
         acceso = {}
         acceso_t = self.ids.acceso_spinner.text
         errores['campos vacios'] += 1 if acceso_t == '' else 0
+        if acceso_t != '':
+            acceso['Tipo'] = acceso_t
         
         acceso_v = None if acceso_t != 'Paga' else self.ids.entrada_precio.ids.dinero.text
-        # Corrección: re.findall devuelve lista. Tienes que verificar la lista.
-        if acceso_v is not None and re.findall(r'[0-9]+', acceso_v): 
-            acceso['Valor']= int(re.findall(r'[0-9]+',acceso_v)[0]) # <-- Añadir [0]
+        # Extraer todos los dígitos y unirlos (ej: "CLP $3.000" -> ['3', '000'] -> '3000')
+        if acceso_v is not None:
+            digitos = re.findall(r'[0-9]+', acceso_v)
+            if digitos:
+                #acceso['Tipo'] = acceso_t
+                acceso['Valor'] = int(''.join(digitos))  # Unir todos los grupos de dígitos
+            else:
+                errores['campos vacios'] += 1
         else:
-            errores['campos vacios'] += 1 if acceso_v == '' else 0
+            if acceso_t == 'Paga':
+                errores['campos vacios'] += 1
             
         
         visibilidad = {}
@@ -881,11 +952,16 @@ class Layout_CreacionEventos(BoxLayout):
             visibilidad['Tipo']= visibilidad_t
         
         visibilidad_v = None if visibilidad_t != 'Publico' else self.ids.preinscripcion_precio.ids.dinero.text
-        # Corrección: re.findall devuelve lista. Tienes que verificar la lista.
-        if visibilidad_t == 'Publico' and re.findall(r'[0-9]+', visibilidad_v):
-            visibilidad['Valor']= int(re.findall(r'[0-9]+', visibilidad_v)[0]) # <-- Añadir [0]
-        else:
-            errores['campos vacios'] += 1 if visibilidad_t == 'Publico' and visibilidad_v == '' else 0
+        # Extraer todos los dígitos y unirlos (ej: "CLP $15.000" -> ['15', '000'] -> '15000')
+        if visibilidad_t == 'Publico':
+            if visibilidad_v:
+                digitos = re.findall(r'[0-9]+', visibilidad_v)
+                if digitos:
+                    visibilidad['Valor'] = int(''.join(digitos))  # Unir todos los grupos de dígitos
+                else:
+                    errores['campos vacios'] += 1
+            else:
+                errores['campos vacios'] += 1
         
         Invitados = {}
         if visibilidad_t == 'Privado':
@@ -915,7 +991,7 @@ class Layout_CreacionEventos(BoxLayout):
                                     
                                     f_n_d = f_n_d_base.replace(hour=h_i, minute=m_i)
 
-                                    if f_n_d > Fecha_Inicio and f_n_d < Fecha_Termino:
+                                    if f_n_d >= Fecha_Inicio and f_n_d <= Fecha_Termino:
                                         fecha['Comienza']=f_n_d.isoformat()
                                     else: 
                                         errores['problemas en invitados'] += 1
@@ -925,7 +1001,23 @@ class Layout_CreacionEventos(BoxLayout):
                                     errores['problemas en invitados'] += 1
                                     
                             else:
-                                fecha['Comienza']=Fecha_Inicio.isoformat()
+                                # Si no hay fecha, intentar usar la hora proporcionada con la fecha de inicio del evento
+                                try:
+                                    hora_inicio_text = f.ids.hora_inicio.ids.usuario.text.replace(':', '')
+                                    if len(hora_inicio_text) >= 3:
+                                        if len(hora_inicio_text) == 3:
+                                            hora_inicio_text = '0' + hora_inicio_text
+                                        h_i = int(hora_inicio_text[:2])
+                                        m_i = int(hora_inicio_text[2:4])
+                                        
+                                        # Usar fecha de inicio del evento pero con la hora especificada
+                                        f_n_d = Fecha_Inicio.replace(hour=h_i, minute=m_i)
+                                        fecha['Comienza'] = f_n_d.isoformat()
+                                    else:
+                                        # Si no hay fecha ni hora, usar inicio del evento
+                                        fecha['Comienza']=Fecha_Inicio.isoformat()
+                                except:
+                                    fecha['Comienza']=Fecha_Inicio.isoformat()
                             
                             f_t_t=f_t.ids.usuario.text
                             # print(f_t_t)
@@ -945,7 +1037,7 @@ class Layout_CreacionEventos(BoxLayout):
                                     
                                     f_t_d = f_t_d_base.replace(hour=h_f, minute=m_f)
 
-                                    if f_t_d < Fecha_Termino and f_t_d > fecha['Comienza']:
+                                    if f_t_d <= Fecha_Termino and f_t_d >= fecha.get('Comienza', Fecha_Inicio):
                                         fecha['Termina']=f_t_d.isoformat()
                                     else: 
                                         errores['problemas en invitados'] += 1
@@ -954,7 +1046,23 @@ class Layout_CreacionEventos(BoxLayout):
                                     # print("error detectado 2")
                                     errores['problemas en invitados'] += 1
                             else:
-                                fecha['Termina']=Fecha_Termino.isoformat()
+                                # Si no hay fecha, intentar usar la hora proporcionada con la fecha de término del evento
+                                try:
+                                    hora_fin_text = f.ids.hora_fin.ids.usuario.text.replace(':', '')
+                                    if len(hora_fin_text) >= 3:
+                                        if len(hora_fin_text) == 3:
+                                            hora_fin_text = '0' + hora_fin_text
+                                        h_f = int(hora_fin_text[:2])
+                                        m_f = int(hora_fin_text[2:4])
+                                        
+                                        # Usar fecha de término del evento pero con la hora especificada
+                                        f_t_d = Fecha_Termino.replace(hour=h_f, minute=m_f)
+                                        fecha['Termina'] = f_t_d.isoformat()
+                                    else:
+                                        # Si no hay fecha ni hora, usar término del evento
+                                        fecha['Termina']=Fecha_Termino.isoformat()
+                                except:
+                                    fecha['Termina']=Fecha_Termino.isoformat()
                                     
                             
                             
@@ -972,6 +1080,9 @@ class Layout_CreacionEventos(BoxLayout):
             
             emergente = Factory.Alertas_Mensaje()
             emergente.titulo='Error al Crear'
+            emergente.texto = mensaje
+            emergente.open()
+            return
         evento_data={
             'Titulo': titulo,
             'Descripcion': descripcion,
@@ -1000,7 +1111,26 @@ class Layout_CreacionEventos(BoxLayout):
         
         # print(evento_data)
         conn= Escritura_Eventos_DB()
-        conn.subir_evento(evento_data)
+        exito = conn.subir_evento(evento_data)
+        
+        if exito:
+            # Limpiar formulario solo si se creó exitosamente
+            self.Limpiar_Campos()
+            
+            # Mostrar mensaje de éxito
+            emergente = Factory.Alertas_Mensaje()
+            emergente.titulo = 'Evento Creado'
+            emergente.texto = 'El evento se ha creado y publicado exitosamente.'
+            emergente.open()
+            
+            print("✅ Evento creado exitosamente - Formulario limpiado")
+        else:
+            print("❌ Error al crear evento - No se limpiaron los campos")
+            # Mostrar mensaje de error
+            emergente = Factory.Alertas_Mensaje()
+            emergente.titulo = 'Error al Crear'
+            emergente.texto = 'Hubo un problema al subir el evento. Por favor intente nuevamente.'
+            emergente.open()
         
         return
         

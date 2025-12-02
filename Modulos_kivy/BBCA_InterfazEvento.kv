@@ -1,7 +1,17 @@
 #:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
 
 <Interfaz_Estadisticas@BoxLayout>:
-    
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(15)
+    padding: dp(10)
+    BoxLayout:
+        id: contenedor_graficos
+        orientation: 'vertical'
+        size_hint_y: None
+        height: self.minimum_height
+        spacing: dp(15)
 
 
 
@@ -11,6 +21,7 @@
     texto: "Sin Texto"
     calificacion: 4
     ubicacion: ''
+    layout_ref: None  # Referencia al Layout_InterfazEvento
     size_hint_y: None
     orientation: 'vertical'
     height: self.minimum_height
@@ -28,13 +39,16 @@
             pos: self.pos[0]+1,self.pos[1]+1
 
         
-    Label:
+    TextInput:
         id: titulo_info
         size_hint: (1,None)
-        height: dp(40)
-        font_size: self.height*0.8
-        color: (0,0,0,1)
+        height: dp(50)
+        font_size: self.height*0.5
+        foreground_color: (0,0,0,1)
+        background_color: (1,1,1,1)
         text: root.titulo
+        multiline: False
+        disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
     TextInput:
         id: descripcion_info
         size_hint: (1,None)
@@ -102,6 +116,124 @@
     
     Label:
         size_hint: (1,None)
+        height: dp(30)
+        text: 'Fechas y Horarios'
+        font_size: self.height*0.7
+        color: 0,0,0,1
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            RoundedRectangle:
+                size: self.size
+                pos:self.pos
+                radius: [dp(5)]
+            Color:
+                rgba:1,1,1,1
+            RoundedRectangle:
+                size: self.size[0]-2,self.size[1]-2
+                pos: self.pos[0]+1,self.pos[1]+1
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(30)
+        padding: dp(10), 0
+        Label:
+            text: 'Inicio:'
+            font_size: self.height*0.5
+            color: (0,0,0,1)
+            size_hint_x: 0.2
+        Input_CreacionEventos_Fecha:
+            id: fecha_inicio_edit
+            size_hint_x: 0.4
+            disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+        Input_CreacionEventos_Hora:
+            id: hora_inicio_edit
+            size_hint_x: 0.4
+            disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(30)
+        padding: dp(10), 0
+        Label:
+            text: 'Fin:'
+            font_size: self.height*0.5
+            color: (0,0,0,1)
+            size_hint_x: 0.2
+        Input_CreacionEventos_Fecha:
+            id: fecha_fin_edit
+            size_hint_x: 0.4
+            disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+        Input_CreacionEventos_Hora:
+            id: hora_fin_edit
+            size_hint_x: 0.4
+            disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    
+    Label:
+        size_hint: (1,None)
+        height: dp(30)
+        text: 'Precios'
+        font_size: self.height*0.7
+        color: 0,0,0,1
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            RoundedRectangle:
+                size: self.size
+                pos:self.pos
+                radius: [dp(5)]
+            Color:
+                rgba:1,1,1,1
+            RoundedRectangle:
+                size: self.size[0]-2,self.size[1]-2
+                pos: self.pos[0]+1,self.pos[1]+1
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(30)
+        padding: dp(10), 0
+        Label:
+            text: 'Entrada:'
+            font_size: self.height*0.5
+            color: (0,0,0,1)
+            size_hint_x: 0.3
+        TextInput:
+            id: precio_entrada_edit
+            text: ''
+            font_size: self.height*0.5
+            foreground_color: (0,0,0,1)
+            background_color: (1,1,1,1)
+            size_hint_x: 0.7
+            multiline: False
+            input_filter: 'int'
+            disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1,None)
+        height: dp(30)
+        padding: dp(10), 0
+        Label:
+            text: 'Preinscripción:'
+            font_size: self.height*0.5
+            color: (0,0,0,1)
+            size_hint_x: 0.3
+        TextInput:
+            id: precio_preinscripcion_edit
+            text: ''
+            font_size: self.height*0.5
+            foreground_color: (0,0,0,1)
+            background_color: (1,1,1,1)
+            size_hint_x: 0.7
+            multiline: False
+            input_filter: 'int'
+            disabled: True if Singleton_Perfil.get_instance().tipo_perfil != 'Organizador' else False
+    
+    Label:
+        size_hint: (1,None)
         height: dp(35)
         text: 'Etiquetas'
         font_size: self.height*0.8
@@ -124,6 +256,31 @@
         size_hint: (0.8,None)
         pos_hint: {'center_x':0.5}
         height: self.minimum_height
+    
+    Widget:
+        size_hint_y: None
+        height: dp(10)
+    
+    Button:
+        text: 'Guardar Cambios'
+        size_hint: (0.8, None)
+        height: dp(50)
+        pos_hint: {'center_x': 0.5}
+        background_color: (0.2, 0.6, 0.2, 1)
+        opacity: 1 if Singleton_Perfil.get_instance().tipo_perfil == 'Organizador' else 0
+        disabled: False if Singleton_Perfil.get_instance().tipo_perfil == 'Organizador' else True
+        on_release: root.layout_ref.Guardar_Cambios() if root.layout_ref else None
+    
+    Button:
+        text: 'Cancelar Evento'
+        size_hint: (0.8, None)
+        height: dp(50)
+        pos_hint: {'center_x': 0.5}
+        background_color: (0.8, 0.2, 0.2, 1)
+        opacity: 1 if Singleton_Perfil.get_instance().tipo_perfil == 'Organizador' else 0
+        disabled: False if Singleton_Perfil.get_instance().tipo_perfil == 'Organizador' else True
+        on_release: root.layout_ref.Cancelar_Evento() if root.layout_ref else None
+
 
 
 
@@ -259,6 +416,7 @@
                 on_press: root.Cargar_Informacion()
             Cambia_Interfaz:
                 texto:'Estadisticas'
+                on_press: root.Cargar_Estadisticas()
         ScrollView:
             do_scroll_x: False
             do_scroll_y: True
