@@ -1,3 +1,4 @@
+#:kivy 2.1.0
 #:import MapView kivy_garden.mapview.MapView
 #:import MapSource kivy_garden.mapview.MapSource
 #:import MapMarker kivy_garden.mapview.MapMarker
@@ -10,43 +11,43 @@
 #:import pi math.pi
 #:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
 
-<Miniatura_Evento>: 
+<Miniatura_Evento>:
         # title, tiempo, action ahora son propiedades válidas de la clase Python.
     title: 'Titulo de Evento'
     tiempo: "15d"
     action: None
-    
+
     # El popup se mostrará automáticamente al hacer clic en el marcador
     BoxLayout:
         orientation: 'vertical'
         size_hint: None, None
         size: dp(200), dp(80)
-        
+
         # Usamos un Button en lugar de ButtonBehavior
         Button:
             size_hint: 1, 1
             background_color: 0,0,0,0  # Transparente
-            on_release: 
+            on_release:
                 menu = Factory.Menu_Evento()
                 menu.titulo = root.title
                 menu.open()
-            
+
             BoxLayout:
                 orientation: 'vertical'
                 pos: self.parent.pos
                 size: self.parent.size
-                
+
                 canvas.before:
                     Color:
                         rgba: 0.2,0.6,0.1,1
                     Rectangle:
                         size: self.size
                         pos: self.pos
-                        
+
                 Label:
                     text: root.title
                     size_hint: 1, 0.5
-                    
+
                 Label:
                     text: root.tiempo
                     size_hint: 1, 0.5
@@ -64,7 +65,7 @@
     canvas.before:
         Color:
             rgba:0,0,0,1
-        Rectangle: 
+        Rectangle:
             size:self.size
             pos:self.pos
     Image:
@@ -74,15 +75,15 @@
         size: root.size[0]-2,root.size[1]-2
 
 <Elemento_Estrella@ButtonBehavior+Widget>:
-    radio: 50.0 
+    radio: 50.0
     porcentaje_visible:0
-    on_size: 
+    on_size:
         self.radio = min(self.width, self.height) * 0.45
-    
+
 
     canvas.before:
         Color:
-            rgba: 1, 0.8, 0.1, root.porcentaje_visible 
+            rgba: 1, 0.8, 0.1, root.porcentaje_visible
         Triangle:
             points: [self.center_x, self.center_y, self.center_x, self.center_y + self.radio, self.center_x + self.radio, self.center_y]
         Triangle:
@@ -96,7 +97,7 @@
 <Etiqueta_Evento@BoxLayout>:
     texto: 'Sin Texto'
     size_hint: (1,None)
-    
+
     height: dp(25)
     canvas.before:
         Color:
@@ -120,7 +121,7 @@
 
 
 <Menu_Evento_Informacion@BoxLayout>:
-    titulo: 'Sin Titulo'
+    titulo: 'Sushi'
     texto: "Sin Texto"
     calificacion: 0
     ubicacion: ''
@@ -140,7 +141,7 @@
             size: self.size[0]-2,self.size[1]-2
             pos: self.pos[0]+1,self.pos[1]+1
 
-        
+
     Label:
         size_hint: (1,None)
         height: dp(40)
@@ -161,7 +162,7 @@
         height: dp(50)
         font_size: ((self.width/len(self.text))*2) if self.width and self.text else self.height*0.6
         text_size: (self.width,None)
-        
+
         color: (0,0,0,1)
         canvas.before:
             Color:
@@ -209,7 +210,7 @@
             size_hint: (None, 0.9)
             width: self.height
             porcentaje_visible: 1 if root.calificacion >= 5 else (root.calificacion - int(root.calificacion) if int(root.calificacion) == 4 else 0)
-    
+
     Label:
         size_hint: (1,None)
         height: dp(35)
@@ -236,53 +237,511 @@
         height: self.minimum_height
 
 
-                        
+
 <Menu_Evento_ListaCompra@BoxLayout>:
     orientation: 'vertical'
     pos_hint: {'center_x':0.5}
-    size_hint: (1,1)
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(5)
+    padding: dp(10)
     Button:
-        text: 'Comprar Entradas'
+        text: 'Comprar Entradas'  # botones de la parte de SHOP
         size_hint: (1,None)
-        height: dp(35)
+        height: dp(50)
         color: (0,0,0,1)
     Button:
         text: 'Comprar Pre-Inscripción'
         size_hint: (1,None)
-        height: dp(35)
+        height: dp(50)
         color: (0,0,0,1)
     Button:
         text: 'Compras con Cupones'
         size_hint: (1,None)
-        height: dp(35)
+        height: dp(50)
         color: (0,0,0,1)
-                    
-                
+
+
 
 <Boton_personalizado@ButtonBehavior+Image>:
     size_hint: (None,1)
     width: self.height
     #background_color: (1,0.9,1,1)
     canvas.before:
-        Color: 
+        Color:
             rgba:1,1,1,1
         Rectangle:
             size: self.size
             pos: self.pos
-         
-        
 
 
 
-<Menu_Evento>:
+
+# --- COMPONENTE 1: Lo que va adentro del Sushi ---
+<Contenido_Sushi@BoxLayout>:  # contenido donde se puede modificar la informacion que contiene dentro
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(2)
+
+    Label:
+        text: 'Reseñas Imagenes'
+        font_size: dp(30)
+        size_hint_y: None
+        height: self.font_size+dp(5)
+        color: (1,1,1,1)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\sushi.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\sushi2.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\sushi3.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\sushi4.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\sushi5.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    # ... Agrega aquí el resto de imágenes de sushi ...
+
+
+# --- COMPONENTE 2: Lo que va adentro de la Feria (NUEVO) ---
+<Contenido_Feria@BoxLayout>:
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(2)
+
+    Label:
+        text: 'Reseñas Imagenes'
+        font_size: dp(30)
+        size_hint_y: None
+        height: self.font_size+dp(5)
+        color: (1,1,1,1)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\tecno1.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\tecno2.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\tecno3.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\tecno4.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\tecno5.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+
+
+<Contenido_Rock@BoxLayout>:   # Contenido que esta dentro del menu rock como las imagenes 
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(2)
+
+    Label:
+        text: 'Reseñas Imagenes'
+        font_size: dp(30)
+        size_hint_y: None
+        height: self.font_size+dp(5)
+        color: (1,1,1,1)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\rock1.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\rock2.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\rock3.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\rock4.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\rock5.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+
+
+# Contenido de Evento Futbol
+
+<Contenido_Fut@BoxLayout>:   # Contenido que esta dentro del menu rock como las imagenes 
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(2)
+
+    Label:
+        text: 'Reseñas Imagenes'
+        font_size: dp(30)
+        size_hint_y: None
+        height: self.font_size+dp(5)
+        color: (1,1,1,1)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\fut1.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\fut2.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\fut3.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\fut4.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\fut5.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+
+<Contenido_Social@BoxLayout>:   # Contenido que esta dentro del menu rock como las imagenes 
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(2)
+
+    Label:
+        text: 'Reseñas Imagenes'
+        font_size: dp(30)
+        size_hint_y: None
+        height: self.font_size+dp(5)
+        color: (1,1,1,1)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\boda1.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\boda2.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\boda3.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\boda4.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\boda5.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+
+
+<Contenido_Lit@BoxLayout>:   # Contenido que esta dentro del menu Literal como las imagenes 
+    orientation: 'vertical'
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: dp(2)
+
+    Label:
+        text: 'Reseñas Imagenes'
+        font_size: dp(30)
+        size_hint_y: None
+        height: self.font_size+dp(5)
+        color: (1,1,1,1)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\lit.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\lit2.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\lit3.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\lit4.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+    Image:
+        source: 'Static\\Eventos\\Imagenes\\lit5.png' # Tu imagen original
+        size_hint_y: None
+        height: dp(200)
+# <Menu_Evento>:
+#     size_hint: 0.99, 0.9
+#     padding: dp(5)
+#     pos_hint: {'center_y':0.5}
+#     background_color: (1,1,1,0)
+#     auto_dismiss: True
+#     pestana:'imagen'
+#     BoxLayout:
+#         orientation: 'vertical'
+#         BoxLayout:
+#             orientation: 'horizontal'
+#             size_hint_y: None
+#             height: dp(50)
+#             canvas.before:
+#                 Color:
+#                     rgba:1,1,1,1
+#                 Rectangle:
+#                     size: self.size
+#                     pos: self.pos
+
+#             #Button:
+#             Boton_personalizado:
+#                 source: 'Static\Imagenes\Fijas (guardar).png'
+#                 text: 'Fijar'
+#                 color: (0.5,0.5,0.5,1)
+#                 #background_color: (0.5,0.5,0.5,1)
+#                 background_normal: ''
+#                 background_down: ''
+#                 size_hint_y: 0.5
+#                 size_hint_x: None
+#                 width: self.height
+#                 pos_hint: {'center_y':0.5}
+#                 #on_release: root.dismiss() if root.dismiss else None
+#             #RelativeLayout:
+#             #    Image:
+
+#             #        source: "Static\Imagenes\share-nodes-solid-full.svg"
+#             #Button:
+#             Boton_personalizado:
+#                 source: "Static\Imagenes\compartir.png"
+#                 text: 'Compartir'
+#                 color: (0,0,1,1)
+#                 #background_color: (0.2,0.2,0.9,1)
+#                 background_normal: ''
+#                 background_down: ''
+#                 size_hint_y: 0.5
+#                 size_hint_x: None
+#                 width: self.height
+#                 pos_hint: {'center_y':0.5}
+#                 #on_release: root.dismiss() if root.dismiss else None
+#             Label:
+#                 text: root.titulo
+#                 color: (0,0,0,1)
+#                 font_size: self.height * 0.4
+#                 valign: 'center'
+#                 halign: 'center'
+#             Button:
+#                 text: 'X'
+#                 color: (0,0,0,1)
+#                 background_color: (0.9,0.2,0.2,1)
+#                 background_normal: ''
+#                 background_down: ''
+#                 size_hint_x: None
+#                 width: self.height
+#                 on_release: root.dismiss() if root.dismiss else None
+#         BoxLayout:
+#             orientation: 'vertical'
+#             size_hint: (1,1)
+#             canvas.before:
+#                 Color:
+#                     rgba: 1,0.95,0.95,1
+#                 Rectangle:
+#                     size: self.size
+#                     pos: self.pos
+#             ScrollView:
+#                 id: listado_menu_evento
+#                 do_scroll_x: False
+#                 do_scroll_y: True
+#                 scroll_y: 1
+#                 BoxLayout:
+#                     id:caja_contenido # ID para despues llamar
+#                     orientation: 'vertical'
+#                     size_hint_y: None
+#                     height: self.minimum_height
+#                     spacing: dp(2)
+
+#                     Label:
+#                         text: 'Reseñas Imagenes'
+#                         font_size: dp(30)
+#                         size_hint_y: None
+#                         height: self.font_size+dp(5)
+#                         color: (1,1,1,1)  # COLOR de la letra del titulo reseña a color blanco
+#                         canvas.before:
+#                             Color:
+#                                 rgba: 0,0,0,1   # Color del titulo reseña, color negro
+#                             Rectangle:
+#                                 size: self.size
+#                                 pos: self.pos
+#                     Image:
+#                         source: 'Static\\Eventos\\Imagenes\\sushi.png'
+#                         size_hint_y: None
+#                         height: dp(200)
+
+#                     Label:
+#                         #text: 'Hola'
+#                         font_size: dp(30)
+#                         color: (0,0,0,1)
+#                         size_hint_y: None
+#                         height: self.font_size+dp(5)
+#                         canvas.before:
+#                             Color:
+#                                 rgba: 1,1,1,1
+#                             Rectangle:
+#                                 size: self.size
+#                                 pos: self.pos
+#                     Image:
+#                         source: 'Static\\Eventos\\Imagenes\\sushi2.png'
+#                         size_hint_y: None
+#                         height: dp(200)
+
+#                     Label:
+#                         #text: 'Hola'
+#                         font_size: dp(30)
+#                         color: (0,0,0,1)
+#                         size_hint_y: None
+#                         height: self.font_size+dp(5)
+#                         canvas.before:
+#                             Color:
+#                                 rgba: 1,1,1,1
+#                             Rectangle:
+#                                 size: self.size
+#                                 pos: self.pos
+
+#                     Image:
+#                         source: 'Static\\Eventos\\Imagenes\\sushi3.png'
+#                         size_hint_y: None
+#                         height: dp(200)
+
+#                     Label:
+#                         #text: 'Hola'
+#                         font_size: dp(30)
+#                         color: (0,0,0,1)
+#                         size_hint_y: None
+#                         height: self.font_size+dp(5)
+#                         canvas.before:
+#                             Color:
+#                                 rgba: 1,1,1,1
+#                             Rectangle:
+#                                 size: self.size
+#                                 pos: self.pos
+#                     Image:
+#                         source: 'Static\\Eventos\\Imagenes\\sushi4.png'
+#                         size_hint_y: None
+#                         height: dp(200)
+
+#                     Label:
+#                         #text: 'Hola'
+#                         font_size: dp(30)
+#                         color: (0,0,0,1)
+#                         size_hint_y: None
+#                         height: self.font_size+dp(5)
+#                         canvas.before:
+#                             Color:
+#                                 rgba: 1,1,1,1
+#                             Rectangle:
+#                                 size: self.size
+#                                 pos: self.pos
+#                     Image:
+#                         source: 'Static\\Eventos\\Imagenes\\sushi5.png'
+#                         size_hint_y: None
+#                         height: dp(200)
+
+#         BoxLayout:
+#             orientation: 'horizontal'
+#             size_hint_y: None
+#             height: dp(60)
+#             spacing: dp(3)
+#             canvas.before:
+#                 Color:
+#                     rgba: 1,1,1,1
+#                 Rectangle:
+#                     size: self.size
+#                     pos: self.pos
+#             Button:
+#                 text: 'Info'
+#                 background_down: ''
+#                 #background_normal: ''
+#                 background_color: (0.1,0.4,1,1)
+#                 size_hint_x: 0.3
+#                 on_release: root.Cargar_Interfaz_Informacion() if root.pestana != 'info' else root.Cargar_Interfaz_Imagenes(); root.pestana="info" if root.pestana != 'info' else  'imagen'
+#             Button:
+#                 text: 'Shop'
+#                 background_down: ''
+#                 #background_normal: ''
+#                 background_color: (0,0,1,1)
+#                 size_hint_x: 0.3
+#                 on_release: root.Cargar_Interfaz_ListaCompras() if root.pestana != 'shop' else root.Cargar_Interfaz_Imagenes(); root.pestana="shop" if root.pestana != 'shop' else  'imagen'
+#             Button:
+#                 text: 'Alert'
+#                 background_down: ''
+#                 #background_normal: ''
+#                 background_color: (0.1,0.1,0,1)
+#                 size_hint_x: 0.3
+
+
+
+## Evento base (PLANTILLA  Para que se pueda reutilizar el codigo ) #### 
+<Menu_Evento_Base>:
+    # Propiedades Generales
     size_hint: 0.99, 0.9
     padding: dp(5)
     pos_hint: {'center_y':0.5}
     background_color: (1,1,1,0)
     auto_dismiss: True
-    pestana:'imagen'
+    
+    # Variables propias para usar en la lógica
+    pestana: 'imagen'
+    titulo: 'Titulo por defecto'
+
     BoxLayout:
         orientation: 'vertical'
+        
+        # --- CABECERA (Barra Superior) ---
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -294,51 +753,49 @@
                     size: self.size
                     pos: self.pos
             
-            #Button:
+            # Botón Fijar
             Boton_personalizado:
                 source: 'Static\Imagenes\Fijas (guardar).png'
                 text: 'Fijar'
                 color: (0.5,0.5,0.5,1)
-                #background_color: (0.5,0.5,0.5,1)
                 background_normal: ''
                 background_down: ''
                 size_hint_y: 0.5
                 size_hint_x: None
                 width: self.height
                 pos_hint: {'center_y':0.5}
-                #on_release: root.dismiss() if root.dismiss else None
-            #RelativeLayout:
-            #    Image:
-                    
-            #        source: "Static\Imagenes\share-nodes-solid-full.svg"
-            #Button:
+
+            # Botón Compartir
             Boton_personalizado:
                 source: "Static\Imagenes\compartir.png"
                 text: 'Compartir'
                 color: (0,0,1,1)
-                #background_color: (0.2,0.2,0.9,1)
                 background_normal: ''
                 background_down: ''
                 size_hint_y: 0.5
                 size_hint_x: None
                 width: self.height
                 pos_hint: {'center_y':0.5}
-                #on_release: root.dismiss() if root.dismiss else None
+
+            # Título Central
             Label:
                 text: root.titulo
                 color: (0,0,0,1)
                 font_size: self.height * 0.4
                 valign: 'center'
                 halign: 'center'
+            
+            # Botón Cerrar (X)
             Button:
                 text: 'X'
                 color: (0,0,0,1)
                 background_color: (0.9,0.2,0.2,1)
                 background_normal: ''
-                background_down: ''
                 size_hint_x: None
                 width: self.height
-                on_release: root.dismiss() if root.dismiss else None
+                on_release: root.dismiss()
+
+        # --- CUERPO CENTRAL (El área dinámica) ---
         BoxLayout:
             orientation: 'vertical'
             size_hint: (1,1)
@@ -348,91 +805,23 @@
                 Rectangle:
                     size: self.size
                     pos: self.pos
+            
             ScrollView:
-                
-                id: listado_menu_evento
+                id:listado_menu_evento
                 do_scroll_x: False
                 do_scroll_y: True
                 scroll_y: 1
+                
+                # ESTA ES LA CLAVE: Un contenedor vacío con un ID
                 BoxLayout:
+                    id: caja_contenido  
                     orientation: 'vertical'
                     size_hint_y: None
                     height: self.minimum_height
                     spacing: dp(2)
-                    Label:
-                        text: 'Hola'
-                        font_size: dp(30)
-                        size_hint_y: None
-                        height: self.font_size+dp(5)
-                        color: (0,0,0,1)
-                        canvas.before:
-                            Color: 
-                                rgba: 1,1,0,1
-                            Rectangle:
-                                size: self.size
-                                pos: self.pos 
-                    Label:
-                        text: 'Hola'
-                        font_size: dp(30)
-                        color: (0,0,0,1)
-                        size_hint_y: None
-                        height: self.font_size+dp(5)
-                        canvas.before:
-                            Color: 
-                                rgba: 1,1,0,1
-                            Rectangle:
-                                size: self.size
-                                pos: self.pos 
-                    Label:
-                        text: 'Hola'
-                        font_size: dp(30)
-                        color: (0,0,0,1)
-                        size_hint_y: None
-                        height: self.font_size+dp(5)
-                        canvas.before:
-                            Color: 
-                                rgba: 1,1,0,1
-                            Rectangle:
-                                size: self.size
-                                pos: self.pos 
-                    Label:
-                        text: 'Hola'
-                        font_size: dp(30)
-                        color: (0,0,0,1)
-                        size_hint_y: None
-                        height: self.font_size+dp(5)
-                        canvas.before:
-                            Color: 
-                                rgba: 1,1,0,1
-                            Rectangle:
-                                size: self.size
-                                pos: self.pos 
-                    Label:
-                        text: 'Hola'
-                        font_size: dp(30)
-                        color: (0,0,0,1)
-                        size_hint_y: None
-                        height: self.font_size+dp(5)
-                        canvas.before:
-                            Color: 
-                                rgba: 1,1,0,1
-                            Rectangle:
-                                size: self.size
-                                pos: self.pos 
-                    Label:
-                        text: 'Hola'
-                        font_size: dp(30)
-                        color: (0,0,0,1)
-                        size_hint_y: None
-                        height: self.font_size+dp(5)
-                        canvas.before:
-                            Color: 
-                                rgba: 1,1,0,1
-                            Rectangle:
-                                size: self.size
-                                pos: self.pos 
-                        
+                    # ¡AQUÍ ESTÁ VACÍO A PROPÓSITO!
 
+        # --- PIE DE PÁGINA (Botones inferiores) ---
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -446,25 +835,50 @@
                     pos: self.pos
             Button:
                 text: 'Info'
-                background_down: ''
-                #background_normal: ''
                 background_color: (0.1,0.4,1,1)
-                size_hint_x: 0.3
-                on_release: root.Cargar_Interfaz_Informacion() if root.pestana != 'info' else root.Cargar_Interfaz_Imagenes(); root.pestana="info" if root.pestana != 'info' else  'imagen'
+                on_release: 
+                    root.Cargar_Interfaz_Informacion() if root.pestana != 'info' else root.Cargar_Interfaz_Imagenes()
             Button:
                 text: 'Shop'
-                background_down: ''
-                #background_normal: ''
                 background_color: (0,0,1,1)
-                size_hint_x: 0.3
-                on_release: root.Cargar_Interfaz_ListaCompras() if root.pestana != 'shop' else root.Cargar_Interfaz_Imagenes(); root.pestana="shop" if root.pestana != 'shop' else  'imagen'
+                on_release: 
+                    root.Cargar_Interfaz_ListaCompras() if root.pestana != 'shop' else root.Cargar_Interfaz_Imagenes()
+
             Button:
                 text: 'Alert'
-                background_down: ''
-                #background_normal: ''
                 background_color: (0.1,0.1,0,1)
-                size_hint_x: 0.3
 
+
+
+# --- MENU FINAL 1: SUSHI ---
+<Menu_Evento_Sushi@Menu_Evento_Base>:
+    # Al crearse (post), inyectamos el Contenido_Sushi en la caja_contenido
+    on_kv_post: 
+        self.ids.caja_contenido.add_widget(Factory.Contenido_Sushi())
+
+# --- MENU FINAL 2: Tecnologia ---
+<Menu_Evento_Feria@Menu_Evento_Base>:
+    # Al crearse (post), inyectamos el Contenido_Feria
+    on_kv_post: 
+        self.ids.caja_contenido.add_widget(Factory.Contenido_Feria())
+
+# ---- Menu Final 3: Rock
+<Menu_Evento_Rock@Menu_Evento_Base>:
+    
+    on_kv_post:
+        self.ids.caja_contenido.add_widget(Factory.Contenido_Rock())
+#---- Menu Final 4 : Futbol
+<Menu_Evento_Fut@Menu_Evento_Base>:
+    on_kv_post:
+        self.ids.caja_contenido.add_widget(Factory.Contenido_Fut())
+#----- Menu Final 5: Social
+<Menu_Evento_Social@Menu_Evento_Base>:
+    on_kv_post:
+        self.ids.caja_contenido.add_widget(Factory.Contenido_Social())
+#-----  Menu Final 6: Literatura
+<Menu_Evento_Lit@Menu_Evento_Base>:
+    on_kv_post:
+        self.ids.caja_contenido.add_widget(Factory.Contenido_Lit())
 
 <AgregarMapa@MapView>:
     id: map_view
@@ -480,15 +894,16 @@
         # CORRECCIÓN: Usar root.parent.parent para llegar al Layout_Mapa
         if root.parent.parent.ubicacion_actualizada and hasattr(self, '_marker'): [ \
         self.remove_marker(self._marker) if self._marker else None, \
-        
+
         # 💥 CAMBIO CRÍTICO AQUÍ 💥
         # Usar Miniatura_Evento en lugar de MapMarker para el marcador de la ubicación actual
         setattr(self, '_marker', Factory.Miniatura_Evento(lat=root.parent.parent.latitud, lon=root.parent.parent.longitud, title="Ubicación Actual")), \
-        
+
         self.add_marker(self._marker), \
-        
+
         setattr(root.parent.parent, 'marker', self._marker) \
         ]
+
 
 
 
@@ -496,7 +911,7 @@
     BoxLayout:
         id: mapa
         size_hint: (1,1)
-            
+
 
     BoxLayout:
         orientation: 'horizontal'

@@ -65,14 +65,14 @@ class Lectura_Eventos_DB:
         if self.latitud and self.longitud:
             codigo_unico=uuid.uuid4().hex
             geolocator = Nominatim(user_agent=str(codigo_unico))
-            location = geolocator.reverse((self.latitud, self.longitud), language='es')
+            location = geolocator.reverse((self.latitud, self.longitud), language='es', timeout=5)
             if location and 'address' in location.raw:
                 direccion = location.raw['address']
                 self.sector=f'{direccion.get("country", "Unknown")}_{direccion.get("state", "Unknown")}_{direccion.get("county", "Unknown")}_{direccion.get("city","Unknown")}'
             else:
                 self.sector = 'Unknown'
         
-        self.sector='Chile_Biobío_Biobío_Los Ángeles'
+        #self.sector='Chile_Biobío_Biobío_Los Ángeles'
 
     def _actualizar_estado_evento(self, fecha_termino_iso: str, estado_actual: str) -> str:
         """
@@ -346,6 +346,97 @@ class Lectura_Eventos_DB:
             eventos_filtrados3[l]=bloque
                      
         return eventos_filtrados3
+    
+    def obtener_eventos_mapa(self, organizador=None, fecha_inicio=None, fecha_fin=None, etiquetas=None, sector=None):
+        """
+        Obtiene eventos específicamente para mostrar en el mapa.
+        Retorna eventos con información completa incluyendo coordenadas y sector.
+        
+        Args:
+            sector (str, optional): Si se proporciona, busca eventos en este sector específico.
+                                    Si es None, usa el sector calculado por ubicación actual.
+        """
+        if not self._check_db(): return {}
+        
+        # Si se especifica un sector manual, usarlo
+        if sector:
+            print(f"DEBUG: Cambiando sector de búsqueda a: {sector}")
+            self.sector = sector
+        
+        try:
+            eventos = self.obtener_eventos_por_fecha(organizador, fecha_inicio, fecha_fin, etiquetas)
+            eventos_mapa = {}
+            
+            for event_id, evento in eventos.items():
+                # Obtener ubicación
+                ubicacion = evento.get('Ubicacion', {})
+                
+                # Solo incluir eventos que tengan coordenadas válidas
+                if isinstance(ubicacion, dict):
+                    lat = ubicacion.get('Latitud')
+                    lon = ubicacion.get('Longitud')
+                    
+                    if lat and lon:
+                        # **IMPORTANTE**: Calcular el sector usando las coordenadas del evento
+                        # Usar la función existente filtrar_coordenadas
+                        self.filtrar_coordenadas(lat, lon)
+                        sector_evento = self.sector  # El sector calculado está en self.sector
+                        
+                        # Agregar el sector a la ubicación
+                        ubicacion_con_sector = ubicacion.copy()
+                        ubicacion_con_sector['Sector'] = sector_evento
+                        
+                        # Calcular calificación
+                        asistencia = evento.get('Asistencia', [])
+                        cantidad_v = len(asistencia)
+                        
+                        if cantidad_v > 0:
+                            cal = [ev.get('Calificacion', 0) for ev in asistencia]
+                            calificacion_t = round((sum(cal)/cantidad_v), 2)
+                        else:
+                            calificacion_t = 0.0
+                        
+                        # Obtener archivos
+                        archivos = evento.get('Archivos', [])
+                        imagenes = [i['Direccion'] for i in archivos if i.get('Tipo') == 'Imagen']
+                        
+                        # Actualizar estado del evento
+                        fechas = evento.get('Fechas', {})
+                        fecha_termino = fechas.get('Fecha_Termino', '')
+                        estado_actual = evento.get('Estado', 'Desconocido')
+                        estado_actualizado = self._actualizar_estado_evento(fecha_termino, estado_actual)
+                        
+                        # Obtener visibilidad
+                        visibilidad = evento.get('Visibilidad', {})
+                        
+                        # Crear bloque de información para el mapa
+                        bloque = {
+                            'Titulo': evento.get('Titulo', 'Sin Título'),
+                            'Descripcion': evento.get('Descripcion', ''),
+                            'Calificacion': calificacion_t,
+                            'Imagenes': imagenes,
+                            'Ubicacion': ubicacion_con_sector,  # Incluir ubicación CON SECTOR
+                            'Etiquetas': evento.get('Etiquetas', []),
+                            'Estado': estado_actualizado,
+                            'Fecha_Inicio': fechas.get('Fecha_Inicio', ''),
+                            'Fecha_Termino': fechas.get('Fecha_Termino', ''),
+                            'Visibilidad': visibilidad,
+                            'Invitados': evento.get('Invitados', []),
+                            'Entrada': evento.get('Acceso', {}).get('Valor',''),
+                            'Pre-inscripcion': evento.get('Visibilidad', {}).get('Valor','')
+                        }
+                        eventos_mapa[event_id] = bloque
+                        print(f"DEBUG: Evento '{bloque['Titulo']}' - Sector calculado: '{sector_evento}'")
+            
+            print(f"DEBUG: Total eventos encontrados: {len(eventos)}")
+            print(f"Eventos con coordenadas para mapa: {len(eventos_mapa)}")
+            return eventos_mapa
+            
+        except Exception as e:
+            print(f"Error en obtener_eventos_mapa: {e}")
+            import traceback
+            traceback.print_exc()
+            return {}
                 
 
 class Escritura_Eventos_DB:
@@ -396,14 +487,14 @@ class Escritura_Eventos_DB:
         if self.latitud and self.longitud:
             codigo_unico=uuid.uuid4().hex
             geolocator = Nominatim(user_agent=str(codigo_unico))
-            location = geolocator.reverse((self.latitud, self.longitud), language='es')
+            location = geolocator.reverse((self.latitud, self.longitud), language='es', timeout=5)
             if location and 'address' in location.raw:
                 direccion = location.raw['address']
                 self.sector=f'{direccion.get("country", "Unknown")}_{direccion.get("state", "Unknown")}_{direccion.get("county", "Unknown")}_{direccion.get("city","Unknown")}'
             else:
                 self.sector = 'Unknown'
         
-        self.sector='Chile_Biobío_Biobío_Los Ángeles'
+        # self.sector='Chile_Biobío_Biobío_Los Ángeles'  # COMENTADO: No forzar sector
 
     def _actualizar_estado_evento(self, fecha_termino_iso: str, estado_actual: str) -> str:
         """
@@ -466,10 +557,26 @@ class Escritura_Eventos_DB:
     def subir_evento(self, evento_data: Dict[str, Any]):
         if not self._check_db(): return
 
-        # 1. Obtener la fecha de término (viene en formato ISO string)
+        # 1. **NUEVO**: Extraer coordenadas del evento y calcular sector automáticamente
+        ubicacion = evento_data.get('Ubicacion', {})
+        if isinstance(ubicacion, dict):
+            lat = ubicacion.get('Latitud')
+            lon = ubicacion.get('Longitud')
+            
+            if lat and lon:
+                # Usar filtrar_coordenadas para calcular el sector del evento
+                print(f"📍 Calculando sector desde coordenadas: ({lat}, {lon})")
+                self.filtrar_coordenadas(lat, lon)
+                print(f"✅ Sector calculado: {self.sector}")
+            else:
+                print("⚠️ Evento sin coordenadas, usando sector por defecto")
+        else:
+            print("⚠️ Ubicación no válida, usando sector por defecto")
+
+        # 2. Obtener la fecha de término (viene en formato ISO string)
         fecha_termino_iso = evento_data['Fechas']['Fecha_Termino']
         
-        # 2. Convertir el string ISO a objeto datetime
+        # 3. Convertir el string ISO a objeto datetime
         try:
             # Manejar formato ISO (ej: "2024-12-01T15:30:00")
             if isinstance(fecha_termino_iso, str):
@@ -486,47 +593,63 @@ class Escritura_Eventos_DB:
             print(f"   Fecha recibida: {fecha_termino_iso}")
             return
                 
-        # 3. Extraer año y mes del objeto datetime
+        # 4. Extraer año y mes del objeto datetime
         año = fecha_termino_dt.year
         mes = fecha_termino_dt.month
                 
-        # 4. Crear un objeto datetime con el día forzado a 1 (para nombre de colección)
+        # 5. Crear un objeto datetime con el día forzado a 1 (para nombre de colección)
         fecha_primer_dia = datetime(año, mes, 1)
 
-        # 5. Convertir a string para usar como nombre de colección
+        # 6. Convertir a string para usar como nombre de colección
         timestamp_str = fecha_primer_dia.strftime('%d-%m-%Y')
                 
-        # 6. Generar el ID único del evento
+        # 7. Generar el ID único del evento
         fecha_id_str = fecha_termino_dt.strftime('%Y%m%d%H%M')
         event_id = f"Event-{random.randint(0, 1000)}-{fecha_id_str}"
 
-        # 7. Actualizar el estado del evento basándose en la fecha
+        # 8. Actualizar el estado del evento basándose en la fecha
         estado_actual = evento_data.get('Estado', 'En Espera')
         evento_data['Estado'] = self._actualizar_estado_evento(fecha_termino_iso, estado_actual)
 
-        # 8. Construir la referencia al documento de 'Eventos'
+        # 9. Construir la referencia al documento de 'Eventos'
         try:
+            # **NUEVO**: Verificar si el sector existe, si no, crearlo
+            sector_ref = self.db.collection("Sector").document(self.sector)
+            
+            # Verificar si el documento del sector existe
+            if not sector_ref.get().exists:
+                print(f"📁 Sector '{self.sector}' no existe. Creándolo...")
+                # Crear el documento del sector con datos iniciales
+                sector_ref.set({
+                    'created_at': datetime.now(),
+                    'nombre': self.sector
+                })
+                print(f"✅ Sector '{self.sector}' creado exitosamente")
+            
             # Sector/{self.sector}/'01-mes-año'/Eventos
             doc_ref = (self.db.collection("Sector")
                       .document(self.sector)
                       .collection(f'{timestamp_str}')
                       .document("Eventos"))
                     
-            # 9. Preparar el payload: {event_id: evento_data}
+            # 10. Preparar el payload: {event_id: evento_data}
             payload = {
                 event_id: evento_data
             }
 
-            # 10. Usar set con merge=True para añadir el nuevo campo sin sobrescribir
+            # 11. Usar set con merge=True para añadir el nuevo campo sin sobrescribir
             doc_ref.set(payload, merge=True)
             
             print(f"✅ Evento '{evento_data.get('Titulo', 'Sin Título')}' subido con éxito.")
             print(f"   ID asignado: {event_id}")
+            print(f"   Sector: {self.sector}")
             print(f"   Estado: {evento_data['Estado']}")
             return True
 
         except Exception as e:
             print(f"❌ Error al intentar subir el evento: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def agregar_archivo_evento(self, event_id: str, archivo_data: Dict[str, Any]):

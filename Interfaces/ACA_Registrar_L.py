@@ -70,18 +70,26 @@ def validar_rut(rut_completo):
 
 #################################################################################
 
+
 def _formatear_datos_firestore(datos):
-        datos_formateados = {}
-        for clave, valor in datos.items():
-            if isinstance(valor, str):
-                datos_formateados[clave] = {'stringValue': valor}
-            elif isinstance(valor, int):
-                datos_formateados[clave] = {'integerValue': str(valor)}
-            # Agrega más tipos según sea necesario (boolean, double, etc.)
-            else:
-                raise ValueError(f"Tipo de dato no soportado para la clave '{clave}': {type(valor)}")
-        return {'fields': datos_formateados}
+    datos_formateados = {}
+    for clave, valor in datos.items():
+        if isinstance(valor, str):
+            datos_formateados[clave] = {'stringValue': valor}
+        elif isinstance(valor, int):
+            datos_formateados[clave] = {'integerValue': str(valor)}
         
+        # --- NUEVO: SOPORTE PARA MAPAS (Diccionarios) ---
+        elif isinstance(valor, dict):
+            # Se llama a sí misma para formatear lo que hay adentro
+            datos_formateados[clave] = {'mapValue': _formatear_datos_firestore(valor)}
+        # ------------------------------------------------
+        
+        else:
+            # Es buena práctica convertir a string otros tipos para que no falle
+            datos_formateados[clave] = {'stringValue': str(valor)}
+            
+    return {'fields': datos_formateados}        
 #################################################################################
 
 
@@ -118,19 +126,21 @@ class Layout_Registrar_L(BoxLayout):
                     # --- MODIFICACIÓN PARA 'NOMBRES' ---
             nombres_input_widget = self.ids.nombres_input.ids.usuario
            #limitador de caracteres a 50
-            funcion_limite_nombres = partial(self.limitar_caracteres, 50)
+            funcion_limite_nombres = partial(self.limitar_caracteres, 25)
             nombres_input_widget.bind(text=funcion_limite_nombres)
             #al salir del input este hace el
             nombres_input_widget.bind(focus=self.capitalizar_al_salir) 
+            nombres_input_widget.input_filter = self.filtro_solo_letras #Funcion para que solo pueda escribir letras y sin simbologia , ademas de aceptar espacio
                     # --- FIN DE MODIFICACIÓN ---
 
                     # --- MODIFICACIÓN PARA 'Apellido' ---
             nombres_input_widget = self.ids.apellidos_input.ids.usuario
            #limitador de caracteres a 50
-            funcion_limite_apellidos = partial(self.limitar_caracteres, 50)
+            funcion_limite_apellidos = partial(self.limitar_caracteres, 25)
             nombres_input_widget.bind(text=funcion_limite_apellidos)
             #al salir del input este hace el
             nombres_input_widget.bind(focus=self.capitalizar_al_salir) 
+            nombres_input_widget.input_filter = self.filtro_solo_letras #Funcion para que solo pueda escribir letras y sin simbologia , ademas de aceptar espacio
                     # --- FIN DE MODIFICACIÓN ---
 
             # --------------------------EDAD------------------------------------
@@ -178,12 +188,21 @@ class Layout_Registrar_L(BoxLayout):
             # --- AÑADE ESTA VINCULACIÓN PARA LA CONTRASEÑA ---
             contrasena_widget = self.ids.contrasena_input.ids.usuario
             contrasena_widget.bind(focus=self.validar_fuerza_contrasena)
+            contrasena_widget.bind(text=self.limitar_caracteres_password)
             # --------------------------------------------------
 
         except AttributeError as e:
             print(f"Error al enlazar el RUT: {e}. Asegúrate de que el ID en el .kv coincida.")
 
         ################################################################################
+    
+    def limitar_caracteres_password(self, widget_input, texto_nuevo):
+            """Impide escribir más de 16 caracteres."""
+            if len(texto_nuevo) > 16:
+                widget_input.text = texto_nuevo[:16]
+
+#################################################################
+
     # --- FILTRO Para digitos en la edad ---
 
     def filtro_solo_digitos(self, substring, from_undo):
@@ -191,8 +210,20 @@ class Layout_Registrar_L(BoxLayout):
         # y solo devolverá aquellos que sean un número.
         return "".join(c for c in substring if c.isdigit())
 
-    # --- FIN DEL FILTRO ---
-    
+    # --- ------------------- ---
+
+# --- FILTRO PARA SOLO LETRAS (VARCHAR TEXTO) ademas de simbologia ---
+    def filtro_solo_letras(self, substring, from_undo):
+        """
+        Permite solo letras (a-z, ñ, á, é, etc.) y espacios.
+        Bloquea números y símbolos extraños.
+        """
+        # Recorremos cada caracter que el usuario intenta escribir
+        # c.isalpha() verifica si es letra.
+        # c == ' ' verifica si es espacio.
+        return "".join(c for c in substring if c.isalpha() or c == ' ')
+    # ------------------------------------------------
+
     ######################VALIDACION DEL RANGO DE EDAD#############################################################
     def validar_edad_rango(self, text_input_widget, is_focused):
         
@@ -365,7 +396,7 @@ class Layout_Registrar_L(BoxLayout):
             if not self.ids.terminos_y_condiciones.ids.checkbox_Registrar_L.active:
                 popup=Popup(
                     title="Términos y Condiciones", #titulo del popup
-                    content=Label(text="Debe aceptar los términos y condiciones para registrarse."),# Lo que contiene
+                    content=Label(text=f"Debe aceptar los términos y condiciones para registrarse."),# Lo que contiene
                     size_hint=(None, None), size=(400, 200) #tamaño del popup
                 )
                 popup.open()
@@ -394,52 +425,100 @@ class Layout_Registrar_L(BoxLayout):
         # --------------------
 
 
-        # 1. Elegir la coleccion
+        # 1. Elegir la COLECION
         coleccion = "Registro"
         
-        #Docuemnento ID unico o basado en algun campo unico
-        id_documento = rut
+        #Id del DOCUEMNTO   
+        #id_documento = rut.split('.')[0]
+        id_documento = 'Usuario'
+        # 2. ENVIAR A FIRESTORE
+        # Aquí es donde le decimos a Firebase: "Guarda estos datos bajo el nombre id_documento"
+        
+        # 5. Construye la URL de destino , coleccion y documento
+        ruta_documento = f"{FIRESTORE_API_URL}/{coleccion}/{id_documento}"
+        
+        
+        print(f"Procesando registro en: {id_documento}")
 
-        # 3. Crear un diccionario con los datos del usuario
-        datos_usuario = {
-            'rut': rut,
+        # 3. --- PASO A: DESCARGAR LO QUE YA EXISTE (GET) ---
+        datos_existentes_fields = {} # Aquí guardaremos a los usuarios antiguos
+        
+        try:
+            response_get = requests.get(ruta_documento)
+            
+            if response_get.status_code == 200:
+                # El documento existe, recuperamos los usuarios que ya hay
+                json_data = response_get.json()
+                datos_existentes_fields = json_data.get('fields', {})
+                
+                # Verificamos si EL NUEVO RUT ya está entre los descargados
+                if rut in datos_existentes_fields:
+                    self.mostrar_popup("Error", f"El RUT {rut} ya está registrado.")
+                    return # Detenemos todo
+            
+            elif response_get.status_code == 404:
+                print("Base de datos vacía, creando el primer usuario...")
+            else:
+                print(f"Advertencia al leer: {response_get.status_code}")
+
+        except requests.exceptions.RequestException as e:
+            self.mostrar_popup("Error Conexión", "No se pudo leer la base de datos.")
+            return
+
+        # 4. --- PASO B: PREPARAR EL NUEVO USUARIO ---
+        # Creamos el diccionario simple del nuevo usuario
+        nuevo_usuario_data = {
             'nombres': nombres,
             'apellidos': apellidos,
-            'edad': edad_numero,
-            'telefono': telefono_numero,
+            'edad': int(edad_texto),
+            'telefono': int(telefono_texto),
             'alias': alias,
             'correo': correo,
             'contrasena': contrasena,
             'rol': 'Estandar'
         }
         
-        # 4. Convierte los datos al formato de Firestore
-        payload_firestore = _formatear_datos_firestore(datos_usuario)
-        
-        # 5. Construye la URL de destino , coleccion y documento
-        ruta_documento = f"{FIRESTORE_API_URL}/{coleccion}"
-        
+        # Lo convertimos al formato raro de Firestore (MapValue, etc.)
+        # OJO: Aquí usamos la función formatear SOLO para los datos internos
         try:
-            # 6. Envía los datos usando PATCH.
-            #response = requests.patch(ruta_documento, data=json.dumps(payload_firestore))
-
-            response= requests.post(ruta_documento, params={'documentId': id_documento}, data=json.dumps(payload_firestore))
-            response.raise_for_status()  # Lanza un error si la respuesta no es 200
-            self.mostrar_popup("Registro Exitoso", "¡Usuario registrado exitosamente!") # registro del usuario de manera exitosa 
-            self.limpiar_campos()
+            nuevo_usuario_formateado = _formatear_datos_firestore(nuevo_usuario_data)
+            # _formatear devuelve {'fields': {...}}, pero nosotros queremos solo lo de adentro
+            # para meterlo dentro del diccionario gigante de usuarios.
             
-        except requests.exceptions.HTTPError as err:
-            if err.response.status_code == 409:
-                self.mostrar_popup("Error de Registro", "El usuario con este RUT ya existe.") # en caso que el rut exista arroje un mensaje
-            else:
-                #en caso de que el registro tenga un error distinto
-                self.mostrar_popup("Error de Registro", f"Error al guardar en Firestore: {err.response.status_code}")
-                print(f"Detalles del error: {err.response.json()}")
-                #en caso que el registro tenga un error distinto
-        except requests.exceptions.RequestException as e:
-            self.mostrar_popup("Error de Conexión", f"Error de conexión: {e}")
-            print(f"Error de conexión: {e}")
+            # El truco: Sacamos el contenido de 'mapValue' que genera tu función 
+            # o simplemente usamos la parte interna de 'fields' si tu función retorna eso.
+            
+            # SIMPLIFICACIÓN: Vamos a asumir que _formatear retorna {'fields': { ... }}
+            # Necesitamos convertir eso en un 'mapValue' para guardarlo junto a los otros.
+            val_interno = nuevo_usuario_formateado['fields']
+            
+            # 5. --- PASO C: AGREGAR EL NUEVO A LOS ANTIGUOS ---
+            # En datos_existentes_fields tenemos: {'11.111.111-1': {mapValue...}, '22.222...': {mapValue...}}
+            # Agregamos el nuestro:
+            datos_existentes_fields[rut] = {
+                'mapValue': {'fields': val_interno}
+            }
 
+        except Exception as e:
+            self.mostrar_popup("Error", f"Error procesando datos: {e}")
+            return
+
+        # 6. --- PASO D: SUBIR TODO DE NUEVO (PATCH) ---
+        # Ahora 'datos_existentes_fields' tiene a los VIEJOS + el NUEVO.
+        payload_final = {'fields': datos_existentes_fields}
+
+        try:
+            response = requests.patch(
+                ruta_documento, 
+                data=json.dumps(payload_final)
+            )
+            response.raise_for_status()
+            
+            self.mostrar_popup("Registro Exitoso", "¡Usuario registrado correctamente!")
+            self.limpiar_campos()
+
+        except requests.exceptions.RequestException as err:
+            self.mostrar_popup("Error", f"Error al guardar: {err}")
 
 ################################################################################
 
@@ -594,8 +673,8 @@ class Layout_Registrar_L(BoxLayout):
     def validar_fuerza_contrasena(self, text_input_widget, is_focused):
         """
         Valida la seguridad de la contraseña al salir del campo.
-        Reglas:
-        1. Mínimo 8 caracteres.
+        Reglas minimas que tiene que cumplir:
+        1. Mínimo 8 caracteres y Maximo 16 caracteres.
         2. Al menos una mayúscula.
         3. Al menos una minúscula.
         4. Al menos un número.
@@ -622,6 +701,7 @@ class Layout_Registrar_L(BoxLayout):
 
         # --- Lógica de Validación ---
         min_longitud = 8
+        max_longitud = 16
         tiene_numero = any(c.isdigit() for c in password)
         tiene_mayuscula = any(c.isupper() for c in password)
         tiene_minuscula = any(c.islower() for c in password)
@@ -629,7 +709,8 @@ class Layout_Registrar_L(BoxLayout):
         
         # Comprobamos todas las reglas
         es_valida = (
-            len(password) >= min_longitud and
+            len(password) >= min_longitud and 
+            len(password) <= max_longitud and
             tiene_numero and
             tiene_mayuscula and
             tiene_minuscula and

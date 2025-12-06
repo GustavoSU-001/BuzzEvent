@@ -1,12 +1,19 @@
+#:kivy 2.1.0
 #:import Singleton_Perfil Modulos.Singleton.Perfil.Singleton_Perfil
 #:import Factory kivy.factory.Factory
 
-
+<Menu_Feria@Menu_Evento>:
+Label:
+    text: "¡SOY LA VERSIÓN FERIA!" 
+    color: 1, 0, 0, 1  # Rojo brillante
+    bold: True
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    font_size: dp(30)
 
 
 <Elemento_Evento@ButtonBehavior+BoxLayout>:
     orientation: 'vertical'
-    titulo: "Sin Titulo"
+    titulo: "Evento de comidas"
     fecha: "01-01-2025"
     tiempo_restante: "15d"
     size_hint: (1,None)
@@ -131,18 +138,42 @@
             scroll_y: 1
             size_hint: (1,1)
             BoxLayout:
-                id: listado_eventos
+                id: listado_menu_evento
                 orientation: 'vertical'
                 size_hint: (1,None)
                 height: self.minimum_height
                 spacing: dp(5)
-                Elemento_Evento:
+                #Los elementos que cvontienen los eventos que aqui se puede modificar para agregar mas eventos 
+                Elemento_Evento: 
+                    id:Evento_primero
+                    titulo: "Evento de Comida"
                     height: dp(65)
-                    on_release: Factory.Menu_Evento(titulo=self.titulo).open()
+                    on_release: Factory.Menu_Evento_Sushi(titulo=self.titulo).open()
                 Elemento_Evento:
+                    id:Evento_segundo
+                    titulo: "Evento de Tecnología"
                     height: dp(65)
-                    on_release: Factory.Menu_Evento(titulo=self.titulo).open()
-
+                    on_release: Factory.Menu_Evento_Feria(titulo=self.titulo).open()
+                Elemento_Evento:
+                    id:Evento_tercero
+                    titulo: "Evento de Rock"
+                    height: dp(65)
+                    on_release: Factory.Menu_Evento_Rock(titulo=self.titulo).open()
+                Elemento_Evento:
+                    id:Evento_cuarto
+                    titulo: "Evento de Futbol" # titulo para ponerle al elemento 
+                    height: dp(65) # Tamaño del elemento
+                    on_release: Factory.Menu_Evento_Fut(titulo=self.titulo).open() # Referencia al menu que se utilizara en el .kv
+                Elemento_Evento:
+                    id:Evento_quinto
+                    titulo: "Evento Social" # titulo para ponerle al elemento
+                    height: dp(65)
+                    on_release: Factory.Menu_Evento_Social(titulo=self.titulo).open()
+                Elemento_Evento:
+                    id:Evento_sexto
+                    titulo: "Evento de Literatura"
+                    height: dp(65)
+                    on_release: Factory.Menu_Evento_Lit(titulo=self.titulo).open()                    
 
 
 

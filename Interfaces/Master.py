@@ -26,6 +26,12 @@ from Interfaces.BAB_EventosFavoritos import Layout_EventosFavoritos
 from Interfaces.BAC_Cupones import Layout_Cupones
 from Interfaces.BAD_Suscripciones import Layout_Suscripciones
 
+
+# Import BBA_Mapa
+from Interfaces.BBA_Mapa import Layout_Mapa as Layout_Mapa_BBA
+
+# Import BBA_Mapa
+from Interfaces.BBA_Mapa import Layout_Mapa as Layout_Mapa_BBA
 from Interfaces.BB_Organizador import Layout_Organizador
 from Interfaces.BBB_CreacionEventos import Layout_CreacionEventos
 from Interfaces.BBC_MisEventos import Layout_MisEventos
@@ -235,6 +241,50 @@ class BBD_Screen(Screen):
             self.layout.Cerrar_Ventana()
 
 
+
+class BBA_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BBA_Screen,self).__init__(**kwargs)
+        self.layout= Layout_Mapa_BBA(self.abrir_otra_pantalla)
+        self.add_widget(self.layout)
+        
+    #Enciende todas las funciones del mapa al entrar en la ventana
+    def on_pre_enter(self, *args):
+        if hasattr(self.layout, 'Iniciar_Ventana'):
+            self.layout.Iniciar_Ventana()
+    
+    #Cierra todas las funciones del mapa al salir en la ventana
+    def on_pre_leave(self, *args):
+        if hasattr(self.layout, 'Cerrar_Ventana'):
+            self.layout.Cerrar_Ventana()
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
+
+class BBA_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(BBA_Screen,self).__init__(**kwargs)
+        self.layout= Layout_Mapa_BBA(self.abrir_otra_pantalla)
+        self.add_widget(self.layout)
+        
+    #Enciende todas las funciones del mapa al entrar en la ventana
+    def on_pre_enter(self, *args):
+        if hasattr(self.layout, 'Iniciar_Ventana'):
+            self.layout.Iniciar_Ventana()
+    
+    #Cierra todas las funciones del mapa al salir en la ventana
+    def on_pre_leave(self, *args):
+        if hasattr(self.layout, 'Cerrar_Ventana'):
+            self.layout.Cerrar_Ventana()
+
+    def abrir_otra_pantalla(self, nueva_pantalla: str,transition= NoTransition):
+        self.manager.transition = transition  # Set the transition for the screen change
+        self.manager.current = nueva_pantalla
+
+
 class BC_Screen(Screen):
     def __init__(self, **kwargs):
         super(BC_Screen,self).__init__(**kwargs)
@@ -264,6 +314,8 @@ class BuzzEvent(App):
         Builder.load_file(r"Modulos_kivy/ACA_Registrar_L.kv")
         Builder.load_file(r"Modulos_kivy/BA_Estandar.kv")
         Builder.load_file(r"Modulos_kivy/BAA_Mapa.kv")
+        Builder.load_file(r"Modulos_kivy/BBA_Mapa.kv")
+        Builder.load_file(r"Modulos_kivy/BBA_Mapa.kv")
         Builder.load_file(r"Modulos_kivy/BAB_EventosFavoritos.kv")
         Builder.load_file(r"Modulos_kivy/BAC_Cupones.kv")
         Builder.load_file(r"Modulos_kivy/BAD_Suscripciones.kv")
@@ -290,6 +342,8 @@ class BuzzEvent(App):
         sm.add_widget(BBCA_Screen(name="BBCA_InterfazEvento"))
         sm.add_widget(BBD_Screen(name="BBD_Estadisticas"))
         sm.add_widget(BC_Screen(name="BC_Administrador"))
+        sm.add_widget(BBA_Screen(name="BBA_Mapa"))
+        sm.add_widget(BBA_Screen(name="BBA_Mapa"))
         
         
         

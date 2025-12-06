@@ -71,61 +71,292 @@ class Menu_Evento_Informacion(BoxLayout):
     calificacion = NumericProperty(0)
 
 
-# La clase Menu_Evento DEBERÍA estar en un archivo KV o en un módulo separado
-class Menu_Evento(ModalView):
-    """Popup modal para mostrar detalles de un evento."""
-    titulo = StringProperty('')
-    def Limpiar_contenido(self):
-        self.ids.listado_menu_evento.clear_widgets()
+
+#NUEVO CODIGO PARA LA SEPARACION  ##################################
+class Menu_Evento_Base(ModalView):
+
+    titulo = StringProperty("Titulo por defecto")
+    pestana = StringProperty("imagen")
+
+    contenido_nombre = StringProperty("")
+
+
+    # def Cargar_Interfaz_Informacion(self):
+    #     """Borra las imágenes y muestra el texto de información."""
+    #     # 1. Buscamos la caja de contenido por su ID
+    #     contenedor = self.ids.caja_contenido
+    #     contenedor.clear_widgets()
         
+    #     # 2. Agregamos un Label simple (o un widget complejo si tienes uno creado)
+    #     lbl = Factory.Label(
+    #         text=f"Información detallada sobre:\n{self.titulo}\n\nHorarios: 10am - 8pm",
+    #         color=(0,0,0,1),
+    #         halign='center'
+    #     )
+    #     contenedor.add_widget(lbl)
+
     def Cargar_Interfaz_Imagenes(self):
-        self.ids.listado_menu_evento.clear_widgets()
-        elementos=[]
-        for e in elementos:
-            imagen=Factory.Menu_Evento_Imagen(imagen=e['imagen'])
-            self.ids.listado_menu_evento.add_widgets(imagen)
+        """Borra la información y restaura el contenido original (Sushi/Feria)."""
+        print(f"DEBUG: Intentando cargar imágenes... contenido_nombre={self.contenido_nombre}")
+        
+        # Verificar que el contenedor existe y está disponible
+        if 'caja_contenido' not in self.ids:
+            print("DEBUG: caja_contenido NO encontrado para imágenes")
+            return
+        
+        try:
+            contenedor = self.ids.caja_contenido
+            contenedor.clear_widgets()
+            print("DEBUG: Widgets limpiados para imágenes")
+            
+            # Usamos la variable 'contenido_nombre' para saber qué restaurar
+            if self.contenido_nombre:
+                # Factory.get() convierte el string "Contenido_Sushi" en la clase real
+                nuevo_widget = Factory.get(self.contenido_nombre)()
+                contenedor.add_widget(nuevo_widget)
+                print(f"DEBUG: Imágenes cargadas: {self.contenido_nombre}")
+            else:
+                print("DEBUG: contenido_nombre está vacío, no se cargaron imágenes")
+            
+            # Actualizar el estado de la pestaña
+            self.pestana = 'imagen'
+            print(f"DEBUG: Pestaña actualizada a: {self.pestana}")
+        except (AttributeError, ReferenceError) as e:
+            # Si el widget ya no existe, simplemente retornar
+            print(f"DEBUG: Error de referencia en imágenes: {e}")
+            return
+        except Exception as e:
+            print(f"DEBUG: Error inesperado en imágenes: {e}")
+            import traceback
+            traceback.print_exc()
+            return
+
+    def Cargar_Interfaz_Informacion(self):
+        """Carga la interfaz de información del evento."""
+        # 1. Verificar si existe el contenedor
+        if 'caja_contenido' not in self.ids:
+            return
+
+        try:
+            # 2. Limpiar widgets existentes de forma segura
+            self.ids.caja_contenido.clear_widgets()
+            
+            # 3. Crear el widget de información
+            interfaz = Menu_Evento_Informacion()
+            
+            # 4. PASAR LOS DATOS (Binding)
+            interfaz.titulo = self.titulo
+            interfaz.texto = self.descripcion    # <--- Aquí pasa el texto
+            interfaz.ubicacion = self.ubicacion
+            interfaz.calificacion = self.calificacion
+            
+            # 5. Etiquetas (Tags)
+            if 'lista_etiquetas' in interfaz.ids:
+                for tag in self.etiquetas:
+                    et = Factory.Etiqueta_Evento()
+                    et.texto = tag
+                    et.altura = 50
+                    interfaz.ids.lista_etiquetas.add_widget(et)
+            
+            # 6. Mostrar en pantalla
+            self.ids.caja_contenido.add_widget(interfaz)
+            
+            # 7. Actualizar el estado de la pestaña
+            self.pestana = 'info'
+        except (AttributeError, ReferenceError):
+            # Si el widget ya no existe, simplemente retornar
+            return
+    
+    #Interfaz que esta dentro de evento SHOP
+    def Cargar_Interfaz_ListaCompras(self):
+        """Carga la interfaz de compras del evento."""
+        print("DEBUG: Intentando cargar Shop...")
+        
+        # Verificar que el contenedor existe - USAR caja_contenido, NO listado_menu_evento
+        if 'caja_contenido' not in self.ids:
+            print("DEBUG: caja_contenido NO encontrado en self.ids")
+            print(f"DEBUG: IDs disponibles: {list(self.ids.keys())}")
+            return
+        
+        print("DEBUG: caja_contenido encontrado, procediendo...")
+            
+        try:
+            # Limpiar el contenedor correcto
+            self.ids.caja_contenido.clear_widgets()
+            print("DEBUG: Widgets limpiados")
+            
+            # Crear y agregar el widget de Shop
+            Shop = Factory.Menu_Evento_ListaCompra()
+            print(f"DEBUG: Shop creado: {Shop}")
+            
+            self.ids.caja_contenido.add_widget(Shop)
+            print("DEBUG: Shop agregado exitosamente")
+            
+            # Actualizar el estado de la pestaña
+            self.pestana = 'shop'
+            print(f"DEBUG: Pestaña actualizada a: {self.pestana}")
+        except (AttributeError, ReferenceError) as e:
+            # Si el widget ya no existe, simplemente retornar
+            print(f"DEBUG: Error de referencia: {e}")
+            return
+        except Exception as e:
+            print(f"DEBUG: Error inesperado: {e}")
+            import traceback
+            traceback.print_exc()
+            return
+
+    
+    
+
+
+class Menu_Evento_Sushi(Menu_Evento_Base): # se agregan los contenido que iran en el evento correspondiente SUSHI
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+        # DATOS ÚNICOS PARA SUSHI  que estos se cambian
+        self.contenido_nombre = "Contenido_Sushi"  # CRÍTICO: Define qué contenido cargar
+        self.titulo = "Informacion"
+        self.descripcion = "¡El mejor sushi de la ciudad! Ven a probar nuestros rolls acevichados..."
+        self.ubicacion = "Calle Japón 123"
+        self.calificacion = 4.5
+        self.etiquetas = ["#Comida", "#Sushi"]
+
+class Menu_Evento_Feria(Menu_Evento_Base):   # Este es lo mismo que arriba , pero feria = Tecnologia
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        #Datos de tecnologia que se puede moficar en el menu
+        self.contenido_nombre = "Contenido_Feria"  # CRÍTICO: Define qué contenido cargar
+        self.titulo ="Informacion"
+        self.descripcion ='Tecnologia de la buena'
+        self.ubicacion ='Calle Rosa #452'
+        self.calificacion = 3.5
+        self.etiquetas = ["#Moderno","#Calidad"]
+        
+class Menu_Evento_Rock(Menu_Evento_Base):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        #Datos de los eventos de rock
+        self.contenido_nombre = "Contenido_Rock"  # CRÍTICO: Define qué contenido cargar
+        self.titulo= "Informacion"
+        self.descripcion='el escenario se encenderá con la energía desbordante del mejor rock en vivo. Guitarras potentes, baterías que retumban y voces llenas de fuerza se unirán para crear una experiencia que te sacudirá de principio a fin.'
+        self.ubicacion='Calle Manuel #245'        
+        self.calificacion=4.8
+        self.etiquetas=['#Rock','#Musica','#Entretencion']
+
+class Menu_Evento_Fut(Menu_Evento_Base):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        #Datos de los eventos de futbol
+        self.contenido_nombre = "Contenido_Fut"  # CRÍTICO: Define qué contenido cargar
+        self.titulo= "Informacion"
+        self.descripcion='El estadio se llena de adrenalina para recibir un partido que promete emoción de principio a fin. Dos equipos con historia, garra y hambre de victoria se enfrentarán en un duelo que pondrá a prueba su talento, estrategia y corazón.'
+        self.ubicacion='Vicente Perez #007'        
+        self.calificacion=2.8
+        self.etiquetas=['#Disciplina','#Recreacion','#Entretencion','#Motivacion']
+
+class Menu_Evento_Social(Menu_Evento_Base):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        #Datos de los eventos de Social
+        self.contenido_nombre = "Contenido_Social"  # CRÍTICO: Define qué contenido cargar
+        self.titulo= "Informacion"
+        self.descripcion='te invitamos a disfrutar de un evento social lleno de alegría, convivencia y buenos momentos. Será una reunión creada para compartir risas, recuerdos y experiencias en un ambiente cálido y amigable.'
+        self.ubicacion='Calle Paris #720'        
+        self.calificacion=4.6
+        self.etiquetas=['#Felicidad','#Life','#Entretencion','#Manifiesto']
+
+class Menu_Evento_Lit(Menu_Evento_Base):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        #Datos de los eventos de Literatura
+        self.contenido_nombre = "Contenido_Lit"  # CRÍTICO: Define qué contenido cargar
+        self.titulo= "Informacion"
+        self.descripcion='El evento contará con presentaciones de autores, lecturas en vivo, firma de libros y charlas sobre procesos creativos, géneros literarios y el poder de la narrativa.'
+        self.ubicacion='Calle Maria #520'        
+        self.calificacion=4.0
+        self.etiquetas=['#HarryPotter','#Literatura','#Libros','#Autores']
+
+
+class Menu_Evento_Informacion(BoxLayout):
+    # Estas propiedades son los "cables" que conectan con el KV
+    texto = StringProperty("Cargando...")
+    ubicacion = StringProperty("")
+    calificacion = NumericProperty(0)
+    titulo = StringProperty("")
+
+
+
+
+
+    
+#########################################################################################################
+
+
+
+# La clase Menu_Evento DEBERÍA estar en un archivo KV o en un módulo separado
+# class Menu_Evento(ModalView):
+#     """Popup modal para mostrar detalles de un evento."""
+#     titulo = StringProperty('')
+     
+#     def Limpiar_contenido(self):
+#         self.ids.listado_menu_evento.clear_widgets()
+        
+#     def Cargar_Interfaz_Imagenes(self):
+#         self.ids.listado_menu_evento.clear_widgets()
+#         elementos=[]
+#         for e in elementos:
+#             imagen=Factory.Menu_Evento_Imagen(imagen=e['imagen'])
+#             self.ids.listado_menu_evento.add_widgets(imagen)
 
         
-    def Cargar_Interfaz_Informacion(self):
-        self.ids.listado_menu_evento.clear_widgets()
-        elementos={
-            'descripcion': 'Este es un ejemplo de descripción. Lorem ipsum dolor sit amet consectetur adipiscing elit justo, suscipit congue lectus pellentesque vulputate imperdiet feugiat, est ligula augue nibh litora egestas torquent. Lobortis tellus integer potenti ornare commodo duis platea accumsan sed proin, leo mauris iaculis et mollis metus consequat orci ullamcorper, sapien euismod venenatis eros dapibus arcu cubilia facilisi posuere. Metus mauris porttitor pharetra hendrerit dis interdum netus, sociis aliquam nulla leo tincidunt himenaeos semper, tellus suspendisse venenatis etiam integer proin.',
-            'ubicacion': 'Lomas Turbas #145, Los Angeles, Bio bio, Chile',
-            'calificacion': 3.3,
-            'etiquetas':["Etiqueta1","Etiqueta2","Etiqueta3","Etiqueta4"]
-        }
-        interfaz = Factory.Menu_Evento_Informacion()
-        interfaz.texto=elementos['descripcion']
-        interfaz.calificacion=elementos["calificacion"]
-        interfaz.ubicacion=elementos["ubicacion"]
+#     #def Cargar_Interfaz_Informacion(self): # Esto es lo que iria dentro del boton info 
+#         self.ids.listado_menu_evento.clear_widgets()
+#         elementos={
+#             'descripcion': '¿Buscas un ambiente vibrante y una gastronomía que rompa esquemas? ¡Bienvenido a Local de sushi! Somos el venue ideal para fiestas, cumpleaños y reuniones sociales que exigen estilo y sabor. Olvídate de los eventos aburridos. Aquí, el sushi es una fiesta: Rolls innovadores, signature cocktails que maridan a la perfección y un DJ set que acompaña la energía de la noche. Nuestro diseño moderno y nuestras instalaciones flexibles están listas para albergar desde 30 hasta [X] invitados.',
+#             'ubicacion': 'Las Heras #145, Los Angeles, Bio bio, Chile', # ubicacion del local
+#             'calificacion': 3.3, # Calificacion del evento
+#             'etiquetas':["#Comida","#Sushi","#Moderno","#Variedad"] # Se colocan las etiquetas relacionado al evento
+#         }
+#         interfaz = Factory.Menu_Evento_Informacion()
+#         interfaz.texto=elementos['descripcion']
+#         interfaz.calificacion=elementos["calificacion"]
+#         interfaz.ubicacion=elementos["ubicacion"]
         
-        for e in elementos["etiquetas"]:
-            etiqueta=Factory.Etiqueta_Evento()
-            etiqueta.texto=e
-            etiqueta.altura=50
-            interfaz.ids.lista_etiquetas.add_widget(etiqueta)
+#         for e in elementos["etiquetas"]:
+#             etiqueta=Factory.Etiqueta_Evento()
+#             etiqueta.texto=e
+#             etiqueta.altura=50
+#             interfaz.ids.lista_etiquetas.add_widget(etiqueta)
         
-        rol=Singleton_Perfil.get_instance().tipo_perfil
-        if rol == "Organizador":
-            etiqueta=Factory.Etiqueta_Evento()
-            etiqueta.texto='+'
-            etiqueta.altura=50
-            interfaz.ids.lista_etiquetas.add_widget(etiqueta)
+#         rol=Singleton_Perfil.get_instance().tipo_perfil
+#         if rol == "Organizador":
+#             etiqueta=Factory.Etiqueta_Evento()
+#             etiqueta.texto='+'
+#             etiqueta.altura=50
+#             interfaz.ids.lista_etiquetas.add_widget(etiqueta)
         
-        self.ids.listado_menu_evento.add_widget(interfaz)
+#         self.ids.listado_menu_evento.add_widget(interfaz)
         
             
         
-    def Cargar_Interfaz_ListaCompras(self):
-        self.ids.listado_menu_evento.clear_widgets()
-        Shop=Factory.Menu_Evento_ListaCompra()
-        self.ids.listado_menu_evento.add_widget(Shop)
+#     def Cargar_Interfaz_ListaCompras(self):
+#         self.ids.listado_menu_evento.clear_widgets()
+#         Shop=Factory.Menu_Evento_ListaCompra()
+#         self.ids.listado_menu_evento.add_widget(Shop)
     
-    def Cargar_Interfaz_Comprando(self):
-        pass
+#     def Cargar_Interfaz_Comprando(self):
+#         pass
         
-    def Cargar_Interfaz_Reporte(self):
-        pass
+#     def Cargar_Interfaz_Reporte(self):
+#         pass
+
+
+
+
+
+
+
 
 class Miniatura_Evento(MapMarkerPopup):
     """
@@ -139,6 +370,13 @@ class Miniatura_Evento(MapMarkerPopup):
     # Nota: No olvides importar StringProperty y ObjectProperty de kivy.properties
     
     marker_source = StringProperty('atlas://map_icons/pin')
+
+
+
+
+
+
+
 
 class Layout_Mapa(FloatLayout):
     """Widget principal que contiene el MapView y maneja la lógica de ubicación/marcadores."""
@@ -504,7 +742,7 @@ class Layout_Mapa(FloatLayout):
         """Regresa a la pantalla BA_Estandar."""
         # Cerrar popups restantes antes de la transición
         for widget in Window.children[:]:
-            if isinstance(widget, (Menu_Evento, ModalView)):
+            if isinstance(widget, (Menu_Evento_Base, ModalView)):
                 try: widget.dismiss()
                 except Exception: pass
         
@@ -566,6 +804,3 @@ class Layout_Mapa(FloatLayout):
         else:
             print("No se pudo mover el mapa: MapView no encontrado.")
         
-        
-        
-  

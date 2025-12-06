@@ -18,7 +18,7 @@ class Layout_Organizador(BoxLayout):
             
         
     def Abrir_Mapa(self):
-        self.abrir_otra_pantalla("BAA_Mapa", transition= SlideTransition(direction="left"))
+        self.abrir_otra_pantalla("BBA_Mapa", transition= SlideTransition(direction="left"))
         
     def Abrir_CreacionEventos(self):
         self.abrir_otra_pantalla("BBB_CreacionEventos", transition= SlideTransition(direction="left"))
